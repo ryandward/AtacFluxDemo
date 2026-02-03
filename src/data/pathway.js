@@ -12,13 +12,22 @@ export const baselineChromatin = {
   EXPORT: 0.30,
 };
 
-// Predicted chromatin after dCas9-VPR intervention
-export const interventionChromatin = {
+// Predicted chromatin after dCas9-KRAB repression
+export const repressedChromatin = {
+  BAT2: 0.18,   // -47% (significant reduction)
+  ARO10: 0.20,  // -52% (significant reduction)
+  ADH6: 0.15,   // -53% (significant reduction)
+  ATF1: 0.02,   // -4% (already nearly closed)
+  EXPORT: 0.30, // passive export, not controllable
+};
+
+// Predicted chromatin after dCas9-VPR activation
+export const activatedChromatin = {
   BAT2: 0.88,   // +23% (marginal gain, already open)
   ARO10: 0.91,  // +19% (marginal gain)
   ADH6: 0.85,   // +17% (marginal gain)
   ATF1: 0.70,   // +64% (HUGE gain, was closed!)
-  EXPORT: 0.30, // can't change passive export
+  EXPORT: 0.30, // passive export, not controllable
 };
 
 // Gene metadata

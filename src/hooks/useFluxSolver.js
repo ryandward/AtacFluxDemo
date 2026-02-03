@@ -1,10 +1,18 @@
 import { useCallback, useMemo } from 'react';
 import {
+  activatedChromatin,
   baselineChromatin,
   geneMetadata,
-  interventionChromatin,
-  pathwayEdges
+  pathwayEdges,
+  repressedChromatin
 } from '../data';
+
+// Helper to get chromatin value based on intervention state
+function getChromatin(gene, state) {
+  if (state === 'activate') return activatedChromatin[gene];
+  if (state === 'repress') return repressedChromatin[gene];
+  return baselineChromatin[gene];
+}
 
 /**
  * Hook for computing metabolic flux through the Ehrlich pathway
@@ -14,19 +22,19 @@ export function useFluxSolver(interventions) {
   // Compute gene states based on current interventions
   const geneStates = useMemo(() => ({
     BAT2: { 
-      chromatin: interventions.BAT2 ? interventionChromatin.BAT2 : baselineChromatin.BAT2,
+      chromatin: getChromatin('BAT2', interventions.BAT2),
       ...geneMetadata.BAT2
     },
     ARO10: { 
-      chromatin: interventions.ARO10 ? interventionChromatin.ARO10 : baselineChromatin.ARO10,
+      chromatin: getChromatin('ARO10', interventions.ARO10),
       ...geneMetadata.ARO10
     },
     ADH6: { 
-      chromatin: interventions.ADH6 ? interventionChromatin.ADH6 : baselineChromatin.ADH6,
+      chromatin: getChromatin('ADH6', interventions.ADH6),
       ...geneMetadata.ADH6
     },
     ATF1: { 
-      chromatin: interventions.ATF1 ? interventionChromatin.ATF1 : baselineChromatin.ATF1,
+      chromatin: getChromatin('ATF1', interventions.ATF1),
       ...geneMetadata.ATF1
     },
     EXPORT: { 

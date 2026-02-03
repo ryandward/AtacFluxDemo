@@ -1,12 +1,12 @@
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { baselineChromatin, interventionChromatin, metabolites, pathwayEdges } from '../../data';
+import { baselineChromatin, activatedChromatin, repressedChromatin, metabolites, pathwayEdges } from '../../data';
 import { getChromatinColor, useFluxSolver, usePathwayLayout } from '../../hooks';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './FluxDynamicsPage.module.css';
 
 // Inline enzyme pill with spring-animated bar
-function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chromatinBarConfig, onToggle }) {
+function InlineEnzyme({ gene, x, y, chromatin = 0.5, interventions = {}, nodeConfig, chromatinBarConfig, onToggle, isBottleneck }) {
   // Spring animate the chromatin value
   const springChromatin = useSpring(chromatin, { stiffness: 180, damping: 12 });
   
@@ -15,19 +15,21 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
     springChromatin.set(chromatin);
   }, [chromatin, springChromatin]);
   
-  if (!gene || gene === 'EXPORT') return null;
-  
+  // Color always reflects chromatin state
   const color = getChromatinColor(chromatin);
-  const isActive = interventions[gene];
-  const isBottleneck = !isActive && chromatin < 0.2;
-  const { width, height, rx } = nodeConfig.enzyme;
-  const barWidth = chromatinBarConfig.width;
-  const barHeight = chromatinBarConfig.height;
+  const isActive = gene && interventions[gene] && interventions[gene] !== 'normal';
+  const { width, height, rx } = nodeConfig?.enzyme || { width: 72, height: 28, rx: 14 };
+  const barWidth = chromatinBarConfig?.width || 54;
+  const barHeight = chromatinBarConfig?.height || 6;
   
   // Derived values from spring
   const barFillWidth = useTransform(springChromatin, v => barWidth * v);
   const glowOpacity = useTransform(springChromatin, v => Math.min(0.6, v * 0.8));
   const glowSize = useTransform(springChromatin, v => 4 + v * 8);
+  const glowFilter = useTransform(glowSize, s => `drop-shadow(0 0 ${s}px ${color})`);
+  
+  // Early return AFTER all hooks
+  if (!gene || gene === 'EXPORT') return null;
   
   return (
     <g 
@@ -35,7 +37,23 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
       onClick={(e) => { e.stopPropagation(); onToggle(gene); }}
       style={{ cursor: 'pointer' }}
     >
-      {/* Outer glow ring */}
+      {/* Bottleneck indicator - separate red outer ring */}
+      {isBottleneck && (
+        <rect
+          x={x - width / 2 - 6}
+          y={y - height / 2 - 6}
+          width={width + 12}
+          height={height + 12}
+          rx={rx + 6}
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth={2}
+          className={styles.enzymeBottleneckPulse}
+          style={{ filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))' }}
+        />
+      )}
+      
+      {/* Chromatin glow ring */}
       <motion.rect
         x={x - width / 2 - 3}
         y={y - height / 2 - 3}
@@ -47,7 +65,7 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
         strokeWidth={2}
         opacity={glowOpacity}
         className={chromatin > 0.5 ? styles.enzymeGlowPulse : ''}
-        style={{ filter: useTransform(glowSize, s => `drop-shadow(0 0 ${s}px ${color})`) }}
+        style={{ filter: glowFilter }}
       />
       
       {/* Pill background */}
@@ -57,7 +75,7 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
         width={width}
         height={height}
         rx={rx}
-        className={`${styles.enzymePill} ${isActive ? styles.enzymeActive : ''} ${isBottleneck ? styles.enzymeBottleneck : ''}`}
+        className={`${styles.enzymePill} ${isActive ? styles.enzymeActive : ''}`}
         style={{ stroke: color, strokeWidth: 1.5 }}
       />
       
@@ -96,14 +114,29 @@ function getFlowClass(chromatin, styles) {
 }
 
 // Flow edge with inline enzyme - MUST be outside PathwayDiagram to preserve InlineEnzyme state
-function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arrowConfig, chromatinBarConfig, onToggle }) {
+function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arrowConfig, chromatinBarConfig, onToggle, fluxState, bottleneckGene }) {
   const fromPos = positions[edge.from];
   const toPos = positions[edge.to];
   if (!fromPos || !toPos) return null;
   
   const chromatin = geneStates[edge.gene]?.chromatin || 0.5;
-  const color = getChromatinColor(chromatin);
-  const isActive = interventions[edge.gene];
+  
+  // For EXPORT edge: use inverse of capture rate for color AND animation
+  // High waste = fast/green, low waste = slow/red
+  let effectiveRate = chromatin;
+  let color;
+  if (edge.gene === 'EXPORT' && fluxState) {
+    const productFlux = fluxState.nodeFlux.iamac || 0;
+    const wasteFlux = fluxState.nodeFlux.waste || 0;
+    const total = productFlux + wasteFlux;
+    const wasteRatio = total > 0 ? wasteFlux / total : 0.5;
+    // wasteRatio is how much goes to waste - this drives EXPORT edge
+    effectiveRate = wasteRatio;
+    color = getChromatinColor(wasteRatio);
+  } else {
+    color = getChromatinColor(chromatin);
+  }
+  const isActive = interventions[edge.gene] && interventions[edge.gene] !== 'normal';
   const thickness = isActive ? arrowConfig.mainThickness + 2 : arrowConfig.mainThickness;
   const nodeHeight = nodeConfig.metabolite.height;
   const padding = 12;
@@ -131,7 +164,7 @@ function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arro
           strokeWidth={thickness}
           strokeLinecap="round"
           strokeDasharray={arrowConfig.dashArray}
-          className={getFlowClass(chromatin, styles)}
+          className={getFlowClass(effectiveRate, styles)}
         />
         {/* Arrow head */}
         <polygon
@@ -148,6 +181,7 @@ function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arro
           nodeConfig={nodeConfig}
           chromatinBarConfig={chromatinBarConfig}
           onToggle={onToggle}
+          isBottleneck={edge.gene === bottleneckGene}
         />
       </g>
     );
@@ -159,7 +193,8 @@ function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arro
   const x2 = toPos.x;
   const y2 = toPos.y - nodeHeight / 2 - padding; // stop at TOP edge of target
   const midY = (y1 + y2) / 2; // horizontal segment at midpoint
-  const branchThickness = isActive ? arrowConfig.branchThickness + 2 : arrowConfig.branchThickness;
+  // Use same thickness as main path for consistent look
+  const branchThickness = thickness;
   const enzymeMidX = (x1 + x2) / 2;
   
   // Arrow head pointing DOWN into the node
@@ -187,7 +222,7 @@ function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arro
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeDasharray={arrowConfig.dashArray}
-        className={getFlowClass(chromatin, styles)}
+        className={getFlowClass(effectiveRate, styles)}
       />
       {/* Arrow head */}
       <polygon points={arrowHead} fill={color} />
@@ -202,6 +237,7 @@ function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arro
           nodeConfig={nodeConfig}
           chromatinBarConfig={chromatinBarConfig}
           onToggle={onToggle}
+          isBottleneck={edge.gene === bottleneckGene}
         />
       )}
     </g>
@@ -220,11 +256,18 @@ function PathwayDiagram({ geneStates, fluxState, interventions, onToggle }) {
     edges 
   } = usePathwayLayout();
 
+  // Calculate bottleneck gene (lowest chromatin among controllable genes)
+  const controllableGenes = ['BAT2', 'ARO10', 'ADH6', 'ATF1'];
+  const bottleneckGene = controllableGenes.reduce((minGene, gene) => {
+    if (!minGene) return gene;
+    return geneStates[gene].chromatin < geneStates[minGene].chromatin ? gene : minGene;
+  }, null);
+
   // Get variant class for metabolite
   const getVariant = (nodeId) => {
     const meta = metabolites[nodeId];
     if (meta.type === 'input') return 'input';
-    if (meta.type === 'product') return interventions.ATF1 ? 'productActive' : 'product';
+    if (meta.type === 'product') return interventions.ATF1 === 'activate' ? 'productActive' : 'product';
     if (meta.type === 'waste') return 'waste';
     return 'default';
   };
@@ -277,7 +320,7 @@ function PathwayDiagram({ geneStates, fluxState, interventions, onToggle }) {
           <stop offset="100%" stopColor="rgba(30, 41, 59, 0.9)" />
         </linearGradient>
         <linearGradient id="productGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={interventions.ATF1 ? "rgba(34, 197, 94, 0.25)" : "rgba(250, 204, 21, 0.2)"} />
+          <stop offset="0%" stopColor={interventions.ATF1 === 'activate' ? "rgba(34, 197, 94, 0.25)" : "rgba(250, 204, 21, 0.2)"} />
           <stop offset="100%" stopColor="rgba(30, 41, 59, 0.9)" />
         </linearGradient>
         <filter id="glow">
@@ -304,6 +347,8 @@ function PathwayDiagram({ geneStates, fluxState, interventions, onToggle }) {
           arrowConfig={arrowConfig}
           chromatinBarConfig={chromatinBarConfig}
           onToggle={onToggle}
+          fluxState={fluxState}
+          bottleneckGene={bottleneckGene}
         />
       ))}
 
@@ -326,26 +371,56 @@ function PathwayDiagram({ geneStates, fluxState, interventions, onToggle }) {
   );
 }
 
-function Toggle({ isOn }) {
+// 3-position segmented control: repress | normal | activate
+function TriStateToggle({ value, onChange }) {
   return (
-    <div className={`${styles.toggle} ${isOn ? styles.on : ''}`}>
-      <div className={styles.toggleKnob} />
+    <div className={styles.triToggle}>
+      <button 
+        className={`${styles.triToggleBtn} ${value === 'repress' ? `${styles.triToggleActive} ${styles.triToggleRepress}` : ''}`}
+        onClick={(e) => { e.stopPropagation(); onChange('repress'); }}
+        title="KRAB Repression"
+      >
+        −
+      </button>
+      <button 
+        className={`${styles.triToggleBtn} ${value === 'normal' ? `${styles.triToggleActive} ${styles.triToggleNormal}` : ''}`}
+        onClick={(e) => { e.stopPropagation(); onChange('normal'); }}
+        title="No Intervention"
+      >
+        ○
+      </button>
+      <button 
+        className={`${styles.triToggleBtn} ${value === 'activate' ? `${styles.triToggleActive} ${styles.triToggleActivate}` : ''}`}
+        onClick={(e) => { e.stopPropagation(); onChange('activate'); }}
+        title="VPR Activation"
+      >
+        +
+      </button>
     </div>
   );
 }
 
 export function FluxDynamicsPage() {
   const [interventions, setInterventions] = useState({
-    BAT2: false,
-    ARO10: false,
-    ADH6: false,
-    ATF1: false,
+    BAT2: 'normal',
+    ARO10: 'normal',
+    ADH6: 'normal',
+    ATF1: 'normal',
   });
 
   const { geneStates, fluxState, baselineFlux } = useFluxSolver(interventions);
 
+  const setIntervention = (gene, state) => {
+    setInterventions(prev => ({ ...prev, [gene]: state }));
+  };
+
+  // Legacy toggle for pathway diagram clicks - cycles through states
   const toggleIntervention = (gene) => {
-    setInterventions(prev => ({ ...prev, [gene]: !prev[gene] }));
+    setInterventions(prev => {
+      const current = prev[gene];
+      const next = current === 'normal' ? 'activate' : current === 'activate' ? 'repress' : 'normal';
+      return { ...prev, [gene]: next };
+    });
   };
 
   const captureRate = fluxState.nodeFlux.iamac / (fluxState.nodeFlux.iamac + fluxState.nodeFlux.waste);
@@ -375,25 +450,37 @@ export function FluxDynamicsPage() {
             <div className={styles.cardContent}>
               <div className={styles.interventionList}>
                 {genes.map(gene => {
-                  const delta = Math.round((interventionChromatin[gene] - baselineChromatin[gene]) * 100);
+                  const state = interventions[gene];
+                  const currentChromatin = geneStates[gene].chromatin;
+                  const baseline = baselineChromatin[gene];
+                  const delta = Math.round((currentChromatin - baseline) * 100);
+                  const deltaSign = delta > 0 ? '+' : '';
+                  
                   return (
                     <div 
                       key={gene}
-                      className={`${styles.interventionRow} ${sharedStyles.selectable} ${interventions[gene] ? styles.active : ''}`}
-                      onClick={() => toggleIntervention(gene)}
+                      className={`${styles.interventionRow} ${sharedStyles.selectable} ${state !== 'normal' ? styles.active : ''}`}
                     >
                       <div className={styles.interventionInfo}>
                         <span 
                           className={styles.interventionGene}
-                          style={{ color: getChromatinColor(geneStates[gene].chromatin) }}
+                          style={{ color: getChromatinColor(currentChromatin) }}
                         >
                           {gene}
                         </span>
                         <span className={styles.interventionMeta}>
-                          {Math.round(baselineChromatin[gene] * 100)}% → <span>{Math.round(interventionChromatin[gene] * 100)}%</span> (+{delta}%)
+                          {Math.round(baseline * 100)}% → {Math.round(currentChromatin * 100)}%
+                          {state !== 'normal' && (
+                            <span style={{ color: delta > 0 ? '#22c55e' : '#ef4444', marginLeft: 4 }}>
+                              ({deltaSign}{delta}%)
+                            </span>
+                          )}
                         </span>
                       </div>
-                      <Toggle isOn={interventions[gene]} />
+                      <TriStateToggle 
+                        value={state} 
+                        onChange={(newState) => setIntervention(gene, newState)} 
+                      />
                     </div>
                   );
                 })}
@@ -445,8 +532,8 @@ export function FluxDynamicsPage() {
                 </div>
               </div>
             </div>
-            <div className={`${styles.insightBanner} ${interventions.ATF1 ? styles.success : ''}`}>
-              {interventions.ATF1 
+            <div className={`${styles.insightBanner} ${interventions.ATF1 === 'activate' ? styles.success : ''}`}>
+              {interventions.ATF1 === 'activate'
                 ? '✓ ATF1 activation redirects flux to product'
                 : '⚠ ATF1 is the bottleneck — most flux lost to waste'}
             </div>
