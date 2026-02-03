@@ -1,5 +1,6 @@
 // Component exports
 export { BiochemistryPage } from './BiochemistryPage/BiochemistryPage';
+export { BottleneckPage } from './BottleneckPage/BottleneckPage';
 export { EpigenomePage } from './EpigenomePage/EpigenomePage';
 export { FluxDynamicsPage } from './FluxDynamicsPage/FluxDynamicsPage';
 export { GuideDesignPage } from './GuideDesignPage/GuideDesignPage';

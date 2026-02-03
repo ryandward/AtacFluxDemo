@@ -1,5 +1,4 @@
-import { bottleneckGenes, epigenomeLayers } from '../../data';
-import sharedStyles from '../../styles/shared.module.css';
+import { epigenomeLayers } from '../../data';
 import styles from './EpigenomePage.module.css';
 
 export function EpigenomePage() {
@@ -40,69 +39,6 @@ export function EpigenomePage() {
             </div>
             <div className={styles.convergenceSubtitle}>
               Multi-omic integration → Reaction flux weights
-            </div>
-          </div>
-        </div>
-
-        {/* Example Gene Panel */}
-        <div className={sharedStyles.panel} style={{ height: 'fit-content' }}>
-          <div className={sharedStyles.panelHeader}>Pathway Bottleneck Analysis</div>
-          <div style={{ padding: 20 }}>
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16 }}>
-                Chromatin accessibility across isoamyl acetate pathway genes
-              </div>
-
-              {bottleneckGenes.map((gene) => (
-                <div key={gene.gene} className={styles.geneBar}>
-                  <div className={styles.geneBarHeader}>
-                    <div>
-                      <span className={`mono ${styles.geneId} ${gene.highlight ? styles.geneIdHighlight : ''}`}>
-                        {gene.gene}
-                      </span>
-                      <span className={styles.geneName}>{gene.name}</span>
-                    </div>
-                    <span className={`mono ${styles.genePct} ${gene.pct > 50 ? styles.genePctHigh : styles.genePctLow}`}>
-                      {gene.pct}%
-                    </span>
-                  </div>
-                  <div className={styles.bottleneckBar}>
-                    <div
-                      className={`${styles.bottleneckFill} ${gene.highlight ? styles.bottleneckFillDanger : styles.bottleneckFillSuccess}`}
-                      style={{ width: `${gene.pct}%` }}
-                    />
-                    {gene.highlight && <div className={styles.bottleneckLabel}>BOTTLENECK</div>}
-                  </div>
-                  <div className={styles.geneRole}>{gene.role}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className={styles.alertBox}>
-              <div className={styles.alertHeader}>
-                <div className={styles.alertIcon}>🔒</div>
-                <div>
-                  <div className={styles.alertTitle}>ATF1 is chromatin-restricted</div>
-                  <div className={styles.alertSubtitle}>6% accessible vs 69-93% for upstream genes</div>
-                </div>
-              </div>
-              <div className={styles.alertBody}>
-                The entire Ehrlich pathway is open <em>except</em> at the final esterification step.
-                Opening ATF1 chromatin could increase banana flavor production by ~4x.
-              </div>
-            </div>
-
-            <div className={sharedStyles.dataRow}>
-              <span className={sharedStyles.dataLabel}>Predicted intervention</span>
-              <span className={sharedStyles.dataValue} style={{ color: '#22c55e' }}>dCas9-VPR activation</span>
-            </div>
-            <div className={sharedStyles.dataRow}>
-              <span className={sharedStyles.dataLabel}>Target region</span>
-              <span className={`${sharedStyles.dataValue} mono`} style={{ fontSize: 11 }}>YOR377W promoter</span>
-            </div>
-            <div className={sharedStyles.dataRow}>
-              <span className={sharedStyles.dataLabel}>Expected Δ flux</span>
-              <span className={sharedStyles.dataValue} style={{ color: '#22c55e' }}>+367%</span>
             </div>
           </div>
         </div>
