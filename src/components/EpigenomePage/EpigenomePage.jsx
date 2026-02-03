@@ -1,30 +1,41 @@
 import { epigenomeLayers } from '../../data';
+import { useSelectionStore } from '../../stores';
+import sharedStyles from '../../styles/shared.module.css';
 import styles from './EpigenomePage.module.css';
 
 export function EpigenomePage() {
+  const { selectedLayer, selectLayer } = useSelectionStore();
+
   return (
     <div className={styles.container}>
         {/* Layer Stack */}
         <div className={styles.layerStack}>
-          {epigenomeLayers.map((layer, i) => (
-            <div key={layer.name}>
-              <div className={styles.layerCard} style={{ borderLeft: `3px solid ${layer.color}` }}>
-                <div className={styles.layerContent}>
-                  <div>
-                    <div className={styles.layerName}>{layer.name}</div>
-                    <div className={styles.layerQuestion}>{layer.question}</div>
-                  </div>
-                  <div
-                    className={styles.layerBadge}
-                    style={{ background: `${layer.color}20`, color: layer.color }}
-                  >
-                    {layer.source}
+          {epigenomeLayers.map((layer, i) => {
+            const isSelected = selectedLayer === layer.source;
+            return (
+              <div key={layer.name}>
+                <div
+                  className={`${styles.layerCard} ${sharedStyles.selectable} ${isSelected ? sharedStyles.selected : ''}`}
+                  style={{ borderLeftColor: layer.color }}
+                  onClick={() => selectLayer(layer.source)}
+                >
+                  <div className={styles.layerContent}>
+                    <div>
+                      <div className={styles.layerName}>{layer.name}</div>
+                      <div className={styles.layerQuestion}>{layer.question}</div>
+                    </div>
+                    <div
+                      className={styles.layerBadge}
+                      style={{ background: `${layer.color}20`, color: layer.color }}
+                    >
+                      {layer.source}
+                    </div>
                   </div>
                 </div>
+                {i < epigenomeLayers.length - 1 && <div className={styles.arrow}>↓</div>}
               </div>
-              {i < epigenomeLayers.length - 1 && <div className={styles.arrow}>↓</div>}
-            </div>
-          ))}
+            );
+          })}
 
           <div className={styles.arrow}>↓</div>
 

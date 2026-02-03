@@ -70,30 +70,17 @@
   padding: 10px 16px;
   font-size: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  cursor: pointer;
-  transition: background 0.2s;
+  border-radius: 4px;
 }
 
-.guideRow:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.guideRowSelected {
-  background: rgba(59, 130, 246, 0.1);
-  border-left: 2px solid #3b82f6;
-}
+/* Hover/selection handled by shared .selectable/.selected classes */
 
 .guideHeader {
   font-weight: 600;
   color: #64748b;
-  cursor: default;
   font-size: 10px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-}
-
-.guideHeader:hover {
-  background: transparent;
 }
 
 /* Details panel */

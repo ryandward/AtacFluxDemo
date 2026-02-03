@@ -1,72 +1,33 @@
-import { useEffect, useRef, useState } from 'react';
+import { motion, useSpring, useTransform } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { baselineChromatin, interventionChromatin, metabolites, pathwayEdges } from '../../data';
 import { getChromatinColor, useFluxSolver, usePathwayLayout } from '../../hooks';
+import sharedStyles from '../../styles/shared.module.css';
 import styles from './FluxDynamicsPage.module.css';
-
-// Spring physics for smooth animation
-function useSpringValue(target, config = { stiffness: 120, damping: 14 }) {
-  const [value, setValue] = useState(target);
-  const velocity = useRef(0);
-  const currentValue = useRef(target);
-  const animationRef = useRef(null);
-  const targetRef = useRef(target);
-  
-  useEffect(() => {
-    targetRef.current = target;
-    
-    const animate = () => {
-      const { stiffness, damping } = config;
-      const displacement = targetRef.current - currentValue.current;
-      const springForce = displacement * stiffness;
-      const dampingForce = velocity.current * damping;
-      const acceleration = springForce - dampingForce;
-      
-      velocity.current += acceleration * 0.016; // ~60fps
-      currentValue.current += velocity.current * 0.016;
-      
-      setValue(currentValue.current);
-      
-      // Continue if not settled
-      if (Math.abs(displacement) > 0.001 || Math.abs(velocity.current) > 0.001) {
-        animationRef.current = requestAnimationFrame(animate);
-      } else {
-        currentValue.current = targetRef.current;
-        setValue(targetRef.current);
-      }
-    };
-    
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
-    animationRef.current = requestAnimationFrame(animate);
-    
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [target, config.stiffness, config.damping]);
-  
-  return value;
-}
 
 // Inline enzyme pill with spring-animated bar
 function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chromatinBarConfig, onToggle }) {
   // Spring animate the chromatin value
-  const animatedChromatin = useSpringValue(chromatin, { stiffness: 180, damping: 12 });
+  const springChromatin = useSpring(chromatin, { stiffness: 180, damping: 12 });
+  
+  // Update spring target when chromatin prop changes
+  useEffect(() => {
+    springChromatin.set(chromatin);
+  }, [chromatin, springChromatin]);
   
   if (!gene || gene === 'EXPORT') return null;
   
-  const color = getChromatinColor(animatedChromatin);
+  const color = getChromatinColor(chromatin);
   const isActive = interventions[gene];
   const isBottleneck = !isActive && chromatin < 0.2;
   const { width, height, rx } = nodeConfig.enzyme;
   const barWidth = chromatinBarConfig.width;
   const barHeight = chromatinBarConfig.height;
   
-  // Glow intensity based on chromatin
-  const glowOpacity = Math.min(0.6, animatedChromatin * 0.8);
-  const glowSize = 4 + animatedChromatin * 8;
+  // Derived values from spring
+  const barFillWidth = useTransform(springChromatin, v => barWidth * v);
+  const glowOpacity = useTransform(springChromatin, v => Math.min(0.6, v * 0.8));
+  const glowSize = useTransform(springChromatin, v => 4 + v * 8);
   
   return (
     <g 
@@ -75,7 +36,7 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
       style={{ cursor: 'pointer' }}
     >
       {/* Outer glow ring */}
-      <rect
+      <motion.rect
         x={x - width / 2 - 3}
         y={y - height / 2 - 3}
         width={width + 6}
@@ -86,7 +47,7 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
         strokeWidth={2}
         opacity={glowOpacity}
         className={chromatin > 0.5 ? styles.enzymeGlowPulse : ''}
-        style={{ filter: `drop-shadow(0 0 ${glowSize}px ${color})` }}
+        style={{ filter: useTransform(glowSize, s => `drop-shadow(0 0 ${s}px ${color})`) }}
       />
       
       {/* Pill background */}
@@ -115,10 +76,10 @@ function InlineEnzyme({ gene, x, y, chromatin, interventions, nodeConfig, chroma
         fill="rgba(255,255,255,0.08)" 
       />
       {/* Chromatin bar fill - animated via spring */}
-      <rect 
+      <motion.rect 
         x={x - barWidth / 2} 
         y={y + height / 2 - barHeight - 3} 
-        width={barWidth * animatedChromatin}
+        width={barFillWidth}
         height={barHeight} 
         rx={barHeight / 2} 
         fill={color}
@@ -192,20 +153,17 @@ function FlowEdge({ edge, positions, geneStates, interventions, nodeConfig, arro
     );
   }
   
-  // Branch edge (horizontal) - simple L-path
+  // Branch edge - L-path: down, horizontal, then down into top of target
   const x1 = fromPos.x;
   const y1 = fromPos.y + nodeHeight / 2 + padding;
-  const midY = fromPos.y + (toPos.y - fromPos.y) * 0.5;
   const x2 = toPos.x;
-  const y2 = toPos.y;
+  const y2 = toPos.y - nodeHeight / 2 - padding; // stop at TOP edge of target
+  const midY = (y1 + y2) / 2; // horizontal segment at midpoint
   const branchThickness = isActive ? arrowConfig.branchThickness + 2 : arrowConfig.branchThickness;
   const enzymeMidX = (x1 + x2) / 2;
   
-  // Determine arrow direction
-  const isRight = x2 > x1;
-  const arrowHead = isRight
-    ? `${x2 - 8},${y2} ${x2 - 14},${y2 - 4} ${x2 - 14},${y2 + 4}`
-    : `${x2 + 8},${y2} ${x2 + 14},${y2 - 4} ${x2 + 14},${y2 + 4}`;
+  // Arrow head pointing DOWN into the node
+  const arrowHead = `${x2},${y2 + 6} ${x2 - 5},${y2} ${x2 + 5},${y2}`;
   
   const branchPath = `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
   
@@ -311,23 +269,6 @@ function PathwayDiagram({ geneStates, fluxState, interventions, onToggle }) {
     );
   };
 
-  // Labels for product/waste
-  const EndpointLabel = ({ nodeId, label }) => {
-    const pos = positions[nodeId];
-    if (!pos) return null;
-    const isProduct = metabolites[nodeId]?.type === 'product';
-    
-    return (
-      <text 
-        x={pos.x} 
-        y={pos.y - nodeConfig.metabolite.height / 2 - 12} 
-        className={isProduct ? styles.productLabel : styles.wasteLabel}
-      >
-        {label}
-      </text>
-    );
-  };
-
   return (
     <svg viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} className={styles.pathwaySvg}>
       <defs>
@@ -370,10 +311,6 @@ function PathwayDiagram({ geneStates, fluxState, interventions, onToggle }) {
       {Object.keys(positions).map(nodeId => (
         <MetaboliteNode key={nodeId} nodeId={nodeId} />
       ))}
-
-      {/* Endpoint labels */}
-      <EndpointLabel nodeId="iamac" label="PRODUCT" />
-      <EndpointLabel nodeId="waste" label="LOSS" />
 
       {/* Legend */}
       <g transform={`translate(${viewBoxWidth - 120}, 60)`}>
@@ -442,7 +379,7 @@ export function FluxDynamicsPage() {
                   return (
                     <div 
                       key={gene}
-                      className={`${styles.interventionRow} ${interventions[gene] ? styles.active : ''}`}
+                      className={`${styles.interventionRow} ${sharedStyles.selectable} ${interventions[gene] ? styles.active : ''}`}
                       onClick={() => toggleIntervention(gene)}
                     >
                       <div className={styles.interventionInfo}>

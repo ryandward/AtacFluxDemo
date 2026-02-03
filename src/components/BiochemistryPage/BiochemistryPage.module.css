@@ -104,6 +104,7 @@
 .tableBody {
   flex: 1;
   overflow: auto;
+  overflow-x: hidden;
 }
 
 .reactionRow {
@@ -113,9 +114,8 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   border-left: 2px solid transparent;
   font-size: 11px;
-  cursor: pointer;
-  transition: all 0.2s ease-out;
-  transform: scale(1);
+  border-radius: 4px;
+  @apply transition-[background,border-left-color] duration-400;
 }
 
 .reactionRowBlocked {

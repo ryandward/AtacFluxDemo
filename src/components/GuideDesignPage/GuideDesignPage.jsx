@@ -64,7 +64,7 @@ export function GuideDesignPage() {
             {guides.map(guide => (
               <div
                 key={guide.id}
-                className={`${styles.guideRow} ${selectedGuide === guide.id ? styles.guideRowSelected : ''}`}
+                className={`${styles.guideRow} ${sharedStyles.selectable} ${selectedGuide === guide.id ? sharedStyles.selected : ''}`}
                 onClick={() => setSelectedGuide(guide.id)}
               >
                 <div className="mono" style={{ fontSize: 10 }}>{guide.spacer}</div>

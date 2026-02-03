@@ -38,17 +38,18 @@
   font-weight: 500;
 }
 
-.layerCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 20px;
-  transition: all 0.3s ease;
+/* Base class for interactive/selectable elements (cards, rows, etc.) */
+.selectable {
+  @apply cursor-pointer relative z-[1] transition-shadow duration-150;
 }
 
-.layerCard:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
+.selectable:hover {
+  @apply shadow-[inset_0_0_0_100px_rgba(255,255,255,0.05)];
+}
+
+/* Selected/lifted state */
+.selected {
+  @apply shadow-[inset_0_0_0_100px_rgba(255,255,255,0.08),_inset_0_1px_0_0_rgba(255,255,255,0.15),_0_4px_16px_rgba(0,0,0,0.5)] relative z-[1];
 }
 
 .toggleSwitch {
@@ -218,14 +219,4 @@
 
 .progressFillDanger {
   background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
-}
-
-/* Selected/lifted row state - composable with status colors */
-.rowSelected {
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18), 0 3px 12px rgba(0, 0, 0, 0.4);
-  border-radius: 5px;
-  position: relative;
-  z-index: 1;
-  transform: scale(1.005);
 }

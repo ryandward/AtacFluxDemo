@@ -265,13 +265,9 @@
   padding: 8px 12px;
   margin: 0 -4px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.interventionRow:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
+/* Hover handled by shared .selectable class */
 
 .interventionRow.active {
   background: rgba(34, 197, 94, 0.08);

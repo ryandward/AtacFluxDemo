@@ -1,20 +1,22 @@
 import { useState } from 'react';
 import { reactionDetails, reactionTableData } from '../../data';
+import { useSelectionStore } from '../../stores';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './BiochemistryPage.module.css';
 
 export function BiochemistryPage() {
-  const [selectedReaction, setSelectedReaction] = useState('r_0160');
+  const { selectedReaction, selectReaction } = useSelectionStore();
   const [anaerobic, setAnaerobic] = useState(false);
   const [isRecalculating, setIsRecalculating] = useState(false);
   const [glucoseLevel, setGlucoseLevel] = useState(10);
 
   const handleAnaerobicToggle = () => {
+    const willBeAnaerobic = !anaerobic;
     setIsRecalculating(true);
+    setAnaerobic(willBeAnaerobic);
     setTimeout(() => {
-      setAnaerobic(!anaerobic);
       setIsRecalculating(false);
-    }, 600);
+    }, 1200);
   };
 
   const handleGlucoseChange = (e) => {
@@ -156,17 +158,17 @@ export function BiochemistryPage() {
               const isLimited = isLowGlucose && !isBlocked && !anaerobic;
               const waveDelay = isRecalculating && anaerobic ? rxn.wave * 200 : 0;
 
-              let rowClass = styles.reactionRow;
+              let rowClass = `${styles.reactionRow} ${sharedStyles.selectable}`;
               if (isBlocked) rowClass += ` ${styles.reactionRowBlocked}`;
               else if (isLimited) rowClass += ` ${styles.reactionRowLimited}`;
               else if (isReduced) rowClass += ` ${styles.reactionRowReduced}`;
               else if (isIncreased) rowClass += ` ${styles.reactionRowIncreased}`;
-              if (isSelected) rowClass += ` ${sharedStyles.rowSelected}`;
+              if (isSelected) rowClass += ` ${sharedStyles.selected}`;
 
               return (
                 <div
                   key={rxn.id}
-                  onClick={() => setSelectedReaction(rxn.id)}
+                  onClick={() => selectReaction(rxn.id)}
                   className={rowClass}
                   style={waveDelay ? { transitionDelay: `${waveDelay}ms` } : undefined}
                 >

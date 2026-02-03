@@ -15,16 +15,14 @@
 .layerCard {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left-width: 3px;
+  border-left-style: solid;
   border-radius: 8px;
   padding: 14px 20px;
   margin-bottom: 4px;
-  transition: all 0.3s ease;
 }
 
-.layerCard:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
-}
+/* Hover handled by shared .selectable class */
 
 .layerContent {
   display: flex;
