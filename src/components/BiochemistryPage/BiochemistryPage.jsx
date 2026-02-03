@@ -154,26 +154,26 @@ export function BiochemistryPage() {
               const isReduced = anaerobic && rxn.status === 'reduced';
               const isIncreased = anaerobic && rxn.status === 'increased';
               const isLimited = isLowGlucose && !isBlocked && !anaerobic;
-              const waveDelay = anaerobic ? rxn.wave * 200 : 0;
+              const waveDelay = isRecalculating && anaerobic ? rxn.wave * 200 : 0;
 
               let rowClass = styles.reactionRow;
-              if (isSelected) rowClass += ` ${styles.reactionRowSelected}`;
-              else if (isBlocked) rowClass += ` ${styles.reactionRowBlocked}`;
+              if (isBlocked) rowClass += ` ${styles.reactionRowBlocked}`;
               else if (isLimited) rowClass += ` ${styles.reactionRowLimited}`;
               else if (isReduced) rowClass += ` ${styles.reactionRowReduced}`;
               else if (isIncreased) rowClass += ` ${styles.reactionRowIncreased}`;
+              if (isSelected) rowClass += ` ${sharedStyles.rowSelected}`;
 
               return (
                 <div
                   key={rxn.id}
                   onClick={() => setSelectedReaction(rxn.id)}
                   className={rowClass}
-                  style={{ transitionDelay: `${waveDelay}ms` }}
+                  style={waveDelay ? { transitionDelay: `${waveDelay}ms` } : undefined}
                 >
                   <div className="mono" style={{
                     color: flux === 0 ? '#ef4444' : isIncreased ? '#22c55e' : (isReduced || isLimited) ? '#fb923c' : '#4ade80',
                     transition: 'color 0.4s',
-                    transitionDelay: `${waveDelay}ms`
+                    transitionDelay: waveDelay ? `${waveDelay}ms` : undefined
                   }}>
                     {flux.toFixed(2)}
                   </div>
@@ -192,7 +192,7 @@ export function BiochemistryPage() {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     transition: 'color 0.4s',
-                    transitionDelay: `${waveDelay}ms`
+                    transitionDelay: waveDelay ? `${waveDelay}ms` : undefined
                   }}>
                     {rxn.name}
                     {isBlocked && <span className={styles.blockedLabel}>● BLOCKED</span>}
