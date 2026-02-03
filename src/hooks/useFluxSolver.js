@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react';
 import {
-  activatedChromatin,
-  baselineChromatin,
-  geneMetadata,
-  pathwayEdges,
-  repressedChromatin
+    activatedChromatin,
+    baselineChromatin,
+    geneMetadata,
+    pathwayEdges,
+    repressedChromatin
 } from '../data';
 
 // Helper to get chromatin value based on intervention state

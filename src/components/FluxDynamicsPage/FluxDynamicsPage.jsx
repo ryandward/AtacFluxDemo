@@ -1,6 +1,6 @@
 import { motion, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { baselineChromatin, activatedChromatin, repressedChromatin, metabolites, pathwayEdges } from '../../data';
+import { baselineChromatin, metabolites, pathwayEdges } from '../../data';
 import { getChromatinColor, useFluxSolver, usePathwayLayout } from '../../hooks';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './FluxDynamicsPage.module.css';
