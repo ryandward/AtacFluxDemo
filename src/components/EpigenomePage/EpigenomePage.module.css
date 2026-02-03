@@ -1,0 +1,238 @@
+/* Epigenome page styles */
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.headline {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Layer stack */
+.layerStack {
+  display: flex;
+  flex-direction: column;
+}
+
+.layerCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.layerCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.layerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.layerName {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.layerQuestion {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.layerBadge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.arrow {
+  text-align: center;
+  color: #475569;
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+/* Convergence box */
+.convergence {
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+  border: 2px solid rgba(59, 130, 246, 0.4);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.convergenceLabel {
+  font-size: 10px;
+  color: #60a5fa;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.convergenceTitle {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.convergenceCode {
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 16px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.convergenceSubtitle {
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* Gene bars */
+.geneBar {
+  margin-bottom: 12px;
+}
+
+.geneBarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.geneId {
+  font-size: 11px;
+}
+
+.geneIdHighlight {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.geneName {
+  font-size: 10px;
+  color: #64748b;
+  margin-left: 6px;
+}
+
+.genePct {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.genePctHigh {
+  color: #22c55e;
+}
+
+.genePctLow {
+  color: #ef4444;
+}
+
+.geneRole {
+  font-size: 9px;
+  color: #475569;
+  margin-top: 2px;
+}
+
+/* Bottleneck bar */
+.bottleneckBar {
+  height: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bottleneckFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.bottleneckFillSuccess {
+  background: linear-gradient(90deg, #15803d 0%, #22c55e 100%);
+}
+
+.bottleneckFillDanger {
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+}
+
+.bottleneckLabel {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 8px;
+  color: #fca5a5;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Alert box */
+.alertBox {
+  padding: 16px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.alertIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.alertTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fca5a5;
+}
+
+.alertSubtitle {
+  font-size: 11px;
+  color: #f87171;
+}
+
+.alertBody {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+}

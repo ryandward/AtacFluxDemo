@@ -1,0 +1,456 @@
+/* Flux Dynamics page styles - SVG Pathway Visualization */
+
+.headline {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 300;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Main layout */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 28px;
+}
+
+/* Glass card base */
+.card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pathwayCard {
+  padding: 16px;
+}
+
+.cardHeader {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.cardContent {
+  padding: 20px;
+}
+
+/* =========================================
+   SVG PATHWAY DIAGRAM
+   ========================================= */
+
+.pathwaySvg {
+  width: 100%;
+  height: calc(100vh - 200px);
+  min-height: 500px;
+  display: block;
+}
+
+.diagramTitle {
+  font-size: 16px;
+  font-weight: 600;
+  fill: #94a3b8;
+  text-anchor: middle;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Metabolite nodes */
+.metaboliteRect {
+  fill: rgba(30, 41, 59, 0.9);
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1;
+  transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s ease;
+}
+
+.metaboliteRect.input {
+  fill: url(#inputGradient);
+  stroke: rgba(59, 130, 246, 0.4);
+}
+
+.metaboliteRect.product {
+  fill: rgba(30, 41, 59, 0.9);
+  stroke: rgba(250, 204, 21, 0.4);
+}
+
+.metaboliteRect.productActive {
+  fill: url(#productGradient);
+  stroke: rgba(34, 197, 94, 0.6);
+  filter: url(#glow);
+}
+
+.metaboliteRect.waste {
+  fill: rgba(20, 25, 35, 0.6);
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-dasharray: 4 2;
+}
+
+.metaboliteText {
+  font-size: 14px;
+  font-weight: 500;
+  fill: #e2e8f0;
+  text-anchor: middle;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.fluxText {
+  font-size: 11px;
+  fill: #64748b;
+  text-anchor: middle;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Enzyme nodes (clickable) - INLINE PILL STYLE */
+.enzymeInline {
+  cursor: pointer;
+}
+
+.enzymeInline:hover .enzymePill {
+  filter: brightness(1.3) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+.enzymePill {
+  fill: rgba(15, 23, 42, 1);
+  stroke-width: 1.5;
+  transition: fill 0.2s ease, filter 0.2s ease, stroke 0.2s ease;
+}
+
+.enzymePill.enzymeActive {
+  fill: rgba(20, 30, 48, 1);
+}
+
+.enzymePill.enzymeBottleneck {
+  fill: rgba(30, 20, 25, 1);
+  animation: pulseBottleneck 2s ease-in-out infinite;
+}
+
+/* Transition for glow ring */
+.enzymeGlow {
+  transition: stroke 400ms ease, opacity 400ms ease, filter 400ms ease;
+}
+
+/* Pulsing glow for active enzymes with high flux */
+.enzymeGlowPulse {
+  animation: glowPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { 
+    opacity: 0.4;
+  }
+  50% { 
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulseBottleneck {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(239, 68, 68, 0)); }
+  50% { filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.6)); }
+}
+
+.chromatinBar {
+  fill: var(--bar-color, #22c55e);
+  transform-box: fill-box;
+  transform-origin: left center;
+  transform: scaleX(var(--bar-scale, 1));
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), fill 0.4s ease;
+}
+
+.chromatinBarFill {
+  transition: width 600ms cubic-bezier(0.34, 1.56, 0.64, 1), background 400ms ease;
+  will-change: width, background;
+}
+
+.enzymeLabel {
+  font-size: 11px;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: fill 0.2s;
+}
+
+.enzymeText {
+  font-size: 13px;
+  font-weight: 600;
+  text-anchor: middle;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: fill 0.3s;
+}
+
+.enzymePercent {
+  font-size: 10px;
+  fill: #64748b;
+  text-anchor: middle;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Labels */
+.productLabel {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #22c55e;
+  text-anchor: middle;
+  letter-spacing: 1.5px;
+}
+
+.wasteLabel {
+  font-size: 12px;
+  font-weight: 600;
+  fill: #64748b;
+  text-anchor: middle;
+  letter-spacing: 1.5px;
+}
+
+/* Legend */
+.legendTitle {
+  font-size: 11px;
+  fill: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.legendText {
+  font-size: 12px;
+  fill: #94a3b8;
+}
+
+/* =========================================
+   ANIMATED FLOW LINES
+   ========================================= */
+
+.flowFast {
+  animation: flowAnimation 0.6s linear infinite;
+}
+
+.flowMedium {
+  animation: flowAnimation 1.2s linear infinite;
+}
+
+.flowSlow {
+  animation: flowAnimation 2.5s linear infinite;
+}
+
+@keyframes flowAnimation {
+  0% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -20; }
+}
+
+/* =========================================
+   CONTROL PANEL
+   ========================================= */
+.controlStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Intervention rows */
+.interventionList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.interventionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin: 0 -4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.interventionRow:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.interventionRow.active {
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.interventionInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.interventionGene {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 50px;
+  transition: color 0.2s;
+}
+
+.interventionMeta {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.interventionMeta span {
+  color: #22c55e;
+  font-weight: 500;
+}
+
+/* Toggle switch */
+.toggle {
+  width: 36px;
+  height: 20px;
+  background: #334155;
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle.on {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.toggleKnob {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle.on .toggleKnob {
+  transform: translateX(16px);
+}
+
+/* Results display */
+.resultsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.resultCard {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.resultLabel {
+  font-size: 9px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.resultValue {
+  font-size: 28px;
+  font-weight: 600;
+  font-family: 'IBM Plex Mono', monospace;
+  transition: color 0.3s;
+  line-height: 1;
+}
+
+.resultUnit {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* Capture rate bar */
+.captureSection {
+  margin-top: 10px;
+}
+
+.captureHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 9px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.captureBar {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+}
+
+.captureProduct {
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #10b981);
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.captureWaste {
+  height: 100%;
+  background: #475569;
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Insight banner */
+.insightBanner {
+  padding: 10px 14px;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  font-size: 11px;
+  color: #94a3b8;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.insightBanner.success {
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+  color: #86efac;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 20px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+

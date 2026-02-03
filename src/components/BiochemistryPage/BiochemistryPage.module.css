@@ -1,0 +1,307 @@
+/* Biochemistry page styles */
+
+.container {
+  display: grid;
+  grid-template-columns: 220px 1fr 320px;
+  gap: 16px;
+  height: calc(100vh - 220px);
+}
+
+.headline {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 300;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Sidebar */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modelBadge {
+  padding: 8px 12px;
+  background: rgba(34, 197, 94, 0.1);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  color: #22c55e;
+}
+
+.thermoBadge {
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 11px;
+  transition: all 0.3s;
+}
+
+.thermoBadgeActive {
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+}
+
+.thermoBadgeRecalculating {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+}
+
+.growthRate {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+}
+
+.conditionOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.conditionOptionInactive {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid transparent;
+}
+
+.conditionOptionActive {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.glucoseSelect {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #e2e8f0;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+/* Reactions table */
+.reactionsPanel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 70px 55px 40px 80px 1fr;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.tableBody {
+  flex: 1;
+  overflow: auto;
+}
+
+.reactionRow {
+  display: grid;
+  grid-template-columns: 70px 55px 40px 80px 1fr;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.reactionRowSelected {
+  background: rgba(59, 130, 246, 0.15);
+  border-left: 2px solid #3b82f6;
+}
+
+.reactionRowBlocked {
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 2px solid #ef4444;
+}
+
+.reactionRowReduced {
+  background: rgba(251, 146, 60, 0.08);
+  border-left: 2px solid #fb923c;
+}
+
+.reactionRowLimited {
+  background: rgba(251, 146, 60, 0.06);
+  border-left: 2px solid #fb923c;
+}
+
+.reactionRowIncreased {
+  background: rgba(34, 197, 94, 0.08);
+  border-left: 2px solid #22c55e;
+}
+
+.dGBadge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+}
+
+.dGBadgeFavorable {
+  background: #065f46;
+  color: #6ee7b7;
+}
+
+.dGBadgeHighFavorable {
+  background: #1e40af;
+  color: #93c5fd;
+}
+
+.dGBadgeUnfavorable {
+  background: #92400e;
+  color: #fcd34d;
+}
+
+.dGBadgeNeutral {
+  background: #374151;
+  color: #9ca3af;
+}
+
+.locBadge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.blockedLabel {
+  margin-left: 8px;
+  color: #ef4444;
+  font-size: 9px;
+}
+
+/* Details panel */
+.detailsPanel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.reactionId {
+  font-size: 14px;
+  color: #60a5fa;
+}
+
+.reactionName {
+  font-size: 13px;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.compartmentLabel {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.compartmentMito {
+  color: #a78bfa;
+}
+
+.compartmentCyto {
+  color: #22c55e;
+}
+
+.equationBox {
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.equation {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.thermoBox {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+}
+
+.thermoBoxFavorable {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.thermoBoxUnfavorable {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.thermoBoxNeutral {
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.dGValue {
+  font-size: 24px;
+  margin-bottom: 4px;
+}
+
+.dGUnit {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.uncertainty {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.thermoLabel {
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.metabolitesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.metaboliteHeader {
+  font-size: 9px;
+  color: #64748b;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.metaboliteItem {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
