@@ -518,12 +518,10 @@ export function EpigenomePage() {
               )}
             </>
           ) : (
-            // Empty state
+            // Empty state - simple prompt
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>📊</div>
-              <div className={styles.emptyTitle}>No layer selected</div>
               <div className={styles.emptyDesc}>
-                Load and select a data layer from the left panel to view its analysis
+                Load a data layer to begin analysis
               </div>
             </div>
           )}
