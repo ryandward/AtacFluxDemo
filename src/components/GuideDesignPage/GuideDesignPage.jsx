@@ -3,19 +3,268 @@ import { guides, targetGene } from '../../data';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './GuideDesignPage.module.css';
 
+// Deterministic pseudo-random noise based on position
+function seededNoise(x) {
+  const n = Math.sin(x * 12.9898) * 43758.5453;
+  return n - Math.floor(n);
+}
+
+// Generate SVG path for ATAC signal based on guide positions and scores
+function generateAtacPath(guides, regionStart, regionEnd, isPredicted = false, selectedGuide = null, isRepression = false) {
+  const width = 100;
+  const height = 32;
+  const baseline = height - 1;
+  
+  // Create points array with baseline noise (deterministic)
+  const points = [];
+  for (let x = 0; x <= width; x += 1) {
+    let y = baseline - (seededNoise(x * 0.1) * 1 + 0.5); // Very low baseline
+    
+    // Add peaks at guide positions - much more dramatic scaling
+    guides.forEach(guide => {
+      const guideX = ((guide.position - regionStart) / (regionEnd - regionStart)) * width;
+      const distance = Math.abs(x - guideX);
+      
+      let score = guide.atacScore;
+      if (isPredicted && selectedGuide === guide.id) {
+        if (isRepression) {
+          // KRAB repression - reduce accessibility dramatically
+          score = Math.max(0.02, guide.atacScore * 0.15);
+        } else {
+          // VPR activation - increase accessibility
+          score = guide.predictedAtac;
+        }
+      }
+      
+      // Peak width scales with score (higher accessibility = wider peak)
+      const peakWidth = 3 + score * 10;
+      
+      if (distance < peakWidth) {
+        // More dramatic peak heights - 42% should be very visible
+        const peakHeight = score * (height - 3);
+        const falloff = Math.pow(Math.max(0, 1 - distance / peakWidth), 1.5);
+        y = Math.min(y, baseline - peakHeight * falloff);
+      }
+    });
+    
+    points.push({ x, y });
+  }
+  
+  // Build smooth path
+  let path = `M0,${baseline} `;
+  points.forEach((p, i) => {
+    if (i === 0) {
+      path += `L${p.x},${p.y} `;
+    } else {
+      const prev = points[i - 1];
+      const cpX = (prev.x + p.x) / 2;
+      path += `Q${prev.x},${prev.y} ${cpX},${(prev.y + p.y) / 2} `;
+    }
+  });
+  path += `L${width},${baseline} L${width},${height} L0,${height} Z`;
+  
+  return path;
+}
+
+// DNA Visualization Component
+function DnaVisualization({ guides, selectedGuide, onSelectGuide, isRepression }) {
+  const regionStart = -500;
+  const regionEnd = 0;
+  const regionWidth = regionEnd - regionStart;
+  
+  // Convert position to percentage
+  const posToPercent = (pos) => ((pos - regionStart) / regionWidth) * 100;
+  
+  // Generate tick marks
+  const ticks = [-500, -400, -300, -200, -100, 0];
+  
+  // Generate ATAC paths
+  const currentAtacPath = generateAtacPath(guides, regionStart, regionEnd, false, null, false);
+  const predictedAtacPath = selectedGuide 
+    ? generateAtacPath(guides, regionStart, regionEnd, true, selectedGuide, isRepression)
+    : null;
+  
+  const selectedGuideData = guides.find(g => g.id === selectedGuide);
+  
+  // Calculate predicted ATAC for display
+  const getPredictedAtac = (guide) => {
+    if (isRepression) {
+      return Math.max(0.02, guide.atacScore * 0.15);
+    }
+    return guide.predictedAtac;
+  };
+  
+  return (
+    <div className={styles.dnaContainer}>
+      <div className={styles.dnaHeader}>
+        <span className={styles.dnaTitle}>ATF1 Promoter Region</span>
+        <span className={styles.dnaCoords}>chr XV: 798,234 - 798,734</span>
+      </div>
+      
+      {/* Main DNA track */}
+      <div className={styles.dnaTrackContainer}>
+        {/* Coordinate axis */}
+        <div className={styles.dnaAxis}>
+          {ticks.map(tick => (
+            <div 
+              key={tick} 
+              className={styles.dnaTick}
+              style={{ left: `${posToPercent(tick)}%` }}
+            >
+              <div className={styles.dnaTickLine} />
+              <span className={styles.dnaTickLabel}>{tick}</span>
+            </div>
+          ))}
+        </div>
+        
+        {/* DNA backbone */}
+        <div className={styles.dnaBackbone}>
+          <div className={styles.dnaStrand} />
+          <div className={styles.dnaHelixPattern} />
+          <div className={`${styles.dnaStrand} ${styles.dnaStrandBottom}`} />
+        </div>
+        
+        {/* TSS marker */}
+        <div className={styles.tssMarker} style={{ left: `${posToPercent(0)}%` }}>
+          <div className={styles.tssArrow}>→</div>
+          <span className={styles.tssLabel}>TSS</span>
+        </div>
+        
+        {/* Guide markers */}
+        {guides.map(guide => {
+          const isSelected = selectedGuide === guide.id;
+          const left = posToPercent(guide.position);
+          return (
+            <div
+              key={guide.id}
+              className={`${styles.guideMarker} ${isSelected ? styles.guideMarkerSelected : ''} ${guide.strand === '+' ? styles.guideMarkerPlus : styles.guideMarkerMinus}`}
+              style={{ left: `${left}%` }}
+              onClick={() => onSelectGuide(guide.id)}
+              title={`Guide ${guide.id}: ${guide.position}bp (${guide.strand})`}
+            >
+              <div className={styles.guideMarkerLine} />
+              <div className={styles.guideMarkerHead}>
+                {guide.strand === '+' ? '▶' : '◀'}
+              </div>
+              {isSelected && (
+                <div className={styles.guideMarkerTooltip}>
+                  <span className="mono">{guide.position}</span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        
+        {/* ATAC-seq accessibility track - Current */}
+        <div className={styles.atacTrack}>
+          <div className={styles.atacLabel}>ATAC</div>
+          <div className={styles.atacSignal}>
+            <svg viewBox="0 0 100 32" preserveAspectRatio="none" className={styles.atacSvg}>
+              <defs>
+                <linearGradient id="atacGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#ef4444" stopOpacity="0.2" />
+                </linearGradient>
+                <linearGradient id="atacPredictedGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#22c55e" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#22c55e" stopOpacity="0.2" />
+                </linearGradient>
+                <linearGradient id="atacRepressionGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.9" />
+                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.2" />
+                </linearGradient>
+              </defs>
+              <path d={currentAtacPath} fill="url(#atacGradient)" />
+            </svg>
+          </div>
+        </div>
+        
+        {/* Predicted ATAC track - shows when guide is selected */}
+        {selectedGuide && (
+          <div className={`${styles.atacTrack} ${styles.atacTrackPredicted}`}>
+            <div className={styles.atacLabel} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
+              {isRepression ? '+KRAB' : '+VPR'}
+            </div>
+            <div className={styles.atacSignal}>
+              <svg viewBox="0 0 100 32" preserveAspectRatio="none" className={styles.atacSvg}>
+                <path d={predictedAtacPath} fill={isRepression ? 'url(#atacRepressionGradient)' : 'url(#atacPredictedGradient)'} />
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <div className={styles.dnaLegend}>
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendDot} ${styles.legendPlus}`} />
+          <span>+ strand</span>
+        </div>
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendDot} ${styles.legendMinus}`} />
+          <span>- strand</span>
+        </div>
+        <div className={styles.legendItem}>
+          <span className={styles.legendAtac} />
+          <span>Current ATAC</span>
+        </div>
+        {selectedGuide && (
+          <div className={styles.legendItem}>
+            <span className={isRepression ? styles.legendAtacRepression : styles.legendAtacPredicted} />
+            <span>Predicted {isRepression ? '+KRAB' : '+VPR'}</span>
+          </div>
+        )}
+        {selectedGuideData && (
+          <div className={styles.legendDelta}>
+            <span className={styles.legendDeltaLabel}>Δ Accessibility:</span>
+            <span className={styles.legendDeltaValue} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
+              {Math.round(selectedGuideData.atacScore * 100)}% → {Math.round(getPredictedAtac(selectedGuideData) * 100)}%
+            </span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function GuideDesignPage() {
   const [selectedGuide, setSelectedGuide] = useState(null);
+  const [isRepression, setIsRepression] = useState(false);
 
   const selectedGuideData = guides.find(g => g.id === selectedGuide);
+  
+  // Calculate predicted values based on mode
+  const getPredictedAtac = (guide) => {
+    if (isRepression) {
+      return Math.max(0.02, guide.atacScore * 0.15);
+    }
+    return guide.predictedAtac;
+  };
+  
+  const getPredictedFlux = (guide) => {
+    if (isRepression) {
+      // KRAB reduces flux - stronger effect for higher ATAC scores
+      const reduction = Math.round(guide.atacScore * 100 * 0.85);
+      return `-${reduction}%`;
+    }
+    return guide.predictedFlux;
+  };
 
   return (
     <div className={styles.pageContainer}>
       {/* Mode header */}
-      <div className={styles.modeHeader}>
-        <span className={styles.modeTitle}>dCas9-VPR Activation Mode (Active)</span>
+      <div className={styles.modeHeader} style={{ background: isRepression 
+        ? 'linear-gradient(90deg, #5b21b6 0%, #7c3aed 100%)' 
+        : 'linear-gradient(90deg, #166534 0%, #15803d 100%)' 
+      }}>
+        <span className={styles.modeTitle}>
+          {isRepression ? 'dCas9-KRAB Repression Mode (Active)' : 'dCas9-VPR Activation Mode (Active)'}
+        </span>
         <div className={styles.modeActions}>
-          <button className={sharedStyles.buttonSecondary}>
-            Switch to: KRAB Repression
+          <button 
+            className={sharedStyles.buttonSecondary}
+            onClick={() => setIsRepression(!isRepression)}
+          >
+            Switch to: {isRepression ? 'VPR Activation' : 'KRAB Repression'}
           </button>
         </div>
       </div>
@@ -43,13 +292,21 @@ export function GuideDesignPage() {
           </div>
         </div>
       </div>
+      
+      {/* DNA Visualization */}
+      <DnaVisualization 
+        guides={guides} 
+        selectedGuide={selectedGuide} 
+        onSelectGuide={setSelectedGuide}
+        isRepression={isRepression}
+      />
 
       {/* Two column layout */}
       <div className={styles.columnsContainer}>
         {/* Guide table */}
         <div className={`${sharedStyles.panel} ${styles.guideTablePanel}`}>
           <div className={sharedStyles.panelHeader} style={{ padding: '8px 16px', fontSize: 11 }}>
-            <span style={{ color: '#22c55e' }}>{guides.length} guides</span> found • Click to select
+            <span style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>{guides.length} guides</span> found • Click to select
           </div>
           <div>
             <div className={`${styles.guideRow} ${styles.guideHeader}`}>
@@ -57,7 +314,7 @@ export function GuideDesignPage() {
               <div>Pos</div>
               <div>±</div>
               <div>PAM</div>
-              <div>Off</div>
+              <div>Offtargets</div>
               <div>ATAC</div>
               <div>Δ Flux</div>
             </div>
@@ -73,15 +330,17 @@ export function GuideDesignPage() {
                 <div className="mono">{guide.pam}</div>
                 <div style={{ color: guide.offTargets === 0 ? '#22c55e' : '#f59e0b' }}>{guide.offTargets}</div>
                 <div style={{ color: '#ef4444' }}>{Math.round(guide.atacScore * 100)}%</div>
-                <div style={{ color: '#22c55e', fontWeight: 500 }}>{guide.predictedFlux}</div>
+                <div style={{ color: isRepression ? '#8b5cf6' : '#22c55e', fontWeight: 500 }}>{getPredictedFlux(guide)}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Selected guide detail */}
-        <div className={`${sharedStyles.panel} ${styles.detailsPanel} ${selectedGuide ? styles.detailsPanelActive : ''}`}>
-          <div className={sharedStyles.panelHeader} style={{ borderColor: selectedGuide ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.06)' }}>
+        <div className={`${sharedStyles.panel} ${styles.detailsPanel} ${selectedGuide ? styles.detailsPanelActive : ''}`} style={{ 
+          borderColor: selectedGuide ? (isRepression ? 'rgba(139, 92, 246, 0.2)' : 'rgba(34, 197, 94, 0.2)') : undefined 
+        }}>
+          <div className={sharedStyles.panelHeader} style={{ borderColor: selectedGuide ? (isRepression ? 'rgba(139, 92, 246, 0.2)' : 'rgba(34, 197, 94, 0.2)') : 'rgba(255,255,255,0.06)' }}>
             Guide Details
           </div>
           {selectedGuideData ? (
@@ -103,19 +362,24 @@ export function GuideDesignPage() {
                 </span>
               </div>
               <div className={sharedStyles.dataRow} style={{ padding: '6px 0' }}>
-                <span className={sharedStyles.dataLabel}>VPR effect</span>
-                <span className={sharedStyles.dataValue} style={{ color: '#22c55e', fontSize: 11 }}>
-                  +64% opening
+                <span className={sharedStyles.dataLabel}>{isRepression ? 'KRAB effect' : 'VPR effect'}</span>
+                <span className={sharedStyles.dataValue} style={{ color: isRepression ? '#8b5cf6' : '#22c55e', fontSize: 11 }}>
+                  → {Math.round(getPredictedAtac(selectedGuideData) * 100)}% ({isRepression ? '' : '+'}{Math.round((getPredictedAtac(selectedGuideData) - selectedGuideData.atacScore) * 100)}%)
                 </span>
               </div>
 
-              <div className={styles.fluxPrediction}>
-                <div className={styles.fluxTitle}>Predicted flux</div>
+              <div className={styles.fluxPrediction} style={{ 
+                background: isRepression ? 'rgba(139, 92, 246, 0.1)' : 'rgba(0, 0, 0, 0.3)' 
+              }}>
+                <div className={styles.fluxTitle}>Predicted isoamyl acetate flux</div>
                 <div className={styles.fluxValues}>
                   <span className={styles.fluxOld}>0.12</span>
                   <span className={styles.fluxArrow}>→</span>
-                  <span className={styles.fluxNew}>
-                    {(0.12 * (1 + parseInt(selectedGuideData.predictedFlux) / 100)).toFixed(2)}
+                  <span className={styles.fluxNew} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
+                    {isRepression 
+                      ? (0.12 * (1 - selectedGuideData.atacScore * 0.85)).toFixed(2)
+                      : (0.12 * (1 + parseInt(selectedGuideData.predictedFlux) / 100)).toFixed(2)
+                    }
                   </span>
                   <span className={styles.fluxUnit}>mmol/gDW/h</span>
                 </div>
@@ -124,15 +388,18 @@ export function GuideDesignPage() {
                 <div className={styles.intensityBar}>
                   <div
                     className={styles.intensityFill}
-                    style={{ width: `${parseInt(selectedGuideData.predictedFlux) + 20}%` }}
+                    style={{ 
+                      width: isRepression 
+                        ? `${Math.max(2, 10 - selectedGuideData.atacScore * 20)}%`
+                        : `${Math.min(100, parseInt(selectedGuideData.predictedFlux) / 5 + 10)}%`,
+                      background: isRepression 
+                        ? 'linear-gradient(90deg, #8b5cf6 0%, #6d28d9 100%)'
+                        : 'linear-gradient(90deg, #22c55e 0%, #facc15 100%)'
+                    }}
                   />
-                  <div className={styles.intensityValue}>{selectedGuideData.predictedFlux}</div>
+                  <div className={styles.intensityValue}>{getPredictedFlux(selectedGuideData)}</div>
                 </div>
               </div>
-
-              <button className={sharedStyles.button} style={{ width: '100%', marginTop: 16 }}>
-                Order this guide
-              </button>
             </div>
           ) : (
             <div className={styles.emptyState}>

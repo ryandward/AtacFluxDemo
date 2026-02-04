@@ -1,6 +1,9 @@
 /**
  * sgRNA guide data for ATF1 promoter targeting
  * Ranked by predicted flux impact with ATAC-seq accessibility scores
+ * 
+ * Logic: Lower ATAC = more closed chromatin = more room for VPR to open = bigger flux gain
+ * But extremely low ATAC sites may be harder to access initially
  */
 
 export const guides = [
@@ -11,8 +14,9 @@ export const guides = [
     strand: '+', 
     pam: 'AGG', 
     offTargets: 0, 
-    atacScore: 0.06, 
-    predictedFlux: '+47%' 
+    atacScore: 0.18,
+    predictedAtac: 0.72,  // After VPR activation
+    predictedFlux: '+312%' 
   },
   { 
     id: 2, 
@@ -21,8 +25,9 @@ export const guides = [
     strand: '-', 
     pam: 'TGG', 
     offTargets: 1, 
-    atacScore: 0.08, 
-    predictedFlux: '+41%' 
+    atacScore: 0.31,
+    predictedAtac: 0.78,
+    predictedFlux: '+198%' 
   },
   { 
     id: 3, 
@@ -31,8 +36,9 @@ export const guides = [
     strand: '+', 
     pam: 'CGG', 
     offTargets: 0, 
-    atacScore: 0.05, 
-    predictedFlux: '+52%' 
+    atacScore: 0.12,
+    predictedAtac: 0.68,
+    predictedFlux: '+387%' 
   },
   { 
     id: 4, 
@@ -41,8 +47,9 @@ export const guides = [
     strand: '+', 
     pam: 'TGG', 
     offTargets: 2, 
-    atacScore: 0.07, 
-    predictedFlux: '+38%' 
+    atacScore: 0.24,
+    predictedAtac: 0.71,
+    predictedFlux: '+245%' 
   },
   { 
     id: 5, 
@@ -51,8 +58,9 @@ export const guides = [
     strand: '-', 
     pam: 'AGG', 
     offTargets: 0, 
-    atacScore: 0.04, 
-    predictedFlux: '+55%' 
+    atacScore: 0.08,
+    predictedAtac: 0.64,
+    predictedFlux: '+421%' 
   },
   { 
     id: 6, 
@@ -61,8 +69,9 @@ export const guides = [
     strand: '+', 
     pam: 'CGG', 
     offTargets: 1, 
-    atacScore: 0.09, 
-    predictedFlux: '+36%' 
+    atacScore: 0.42,
+    predictedAtac: 0.81,
+    predictedFlux: '+156%' 
   },
   { 
     id: 7, 
@@ -71,8 +80,9 @@ export const guides = [
     strand: '-', 
     pam: 'GGG', 
     offTargets: 0, 
-    atacScore: 0.06, 
-    predictedFlux: '+44%' 
+    atacScore: 0.22,
+    predictedAtac: 0.74,
+    predictedFlux: '+267%' 
   },
   { 
     id: 8, 
@@ -81,8 +91,9 @@ export const guides = [
     strand: '+', 
     pam: 'AGG', 
     offTargets: 0, 
-    atacScore: 0.05, 
-    predictedFlux: '+49%' 
+    atacScore: 0.15,
+    predictedAtac: 0.69,
+    predictedFlux: '+345%' 
   },
 ];
 
