@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { motion, useSpring, useTransform } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { guides } from '../../data';
 import sharedStyles from '../../styles/shared.module.css';
 import styles from './GuideDesignPage.module.css';
@@ -258,6 +259,21 @@ export function GuideDesignPage() {
     return guide.predictedFlux;
   };
 
+  // Calculate intensity percentage for the bar
+  const intensityPercent = selectedGuideData 
+    ? (isRepression 
+        ? Math.max(2, 10 - selectedGuideData.atacScore * 20)
+        : Math.min(100, parseInt(selectedGuideData.predictedFlux) / 5 + 10))
+    : 10;
+
+  // Spring animate the intensity bar
+  const springIntensity = useSpring(intensityPercent, { stiffness: 120, damping: 20 });
+  useEffect(() => {
+    springIntensity.set(intensityPercent);
+  }, [intensityPercent, springIntensity]);
+  
+  const intensityWidth = useTransform(springIntensity, v => `${v}%`);
+
   return (
     <div className={styles.pageContainer}>
       {/* Mode header */}
@@ -326,7 +342,7 @@ export function GuideDesignPage() {
         <div className={`${sharedStyles.panel} ${styles.detailsPanel} ${selectedGuide ? styles.detailsPanelActive : ''}`} style={{ 
           borderColor: selectedGuide ? (isRepression ? 'rgba(139, 92, 246, 0.2)' : 'rgba(34, 197, 94, 0.2)') : undefined 
         }}>
-          <div className={sharedStyles.panelHeader} style={{ borderColor: selectedGuide ? (isRepression ? 'rgba(139, 92, 246, 0.2)' : 'rgba(34, 197, 94, 0.2)') : 'rgba(255,255,255,0.06)' }}>
+          <div className={sharedStyles.panelHeader} style={{ padding: '8px 16px', fontSize: 11, borderColor: selectedGuide ? (isRepression ? 'rgba(139, 92, 246, 0.2)' : 'rgba(34, 197, 94, 0.2)') : 'rgba(255,255,255,0.06)' }}>
             Guide Details
           </div>
           {selectedGuideData ? (
@@ -370,20 +386,20 @@ export function GuideDesignPage() {
                   <span className={styles.fluxUnit}>mmol/gDW/h</span>
                 </div>
 
-                <div className={styles.intensityLabel}>Banana flavor intensity</div>
+                <div className={styles.intensityHeader}>
+                  <span>Banana flavor intensity</span>
+                  <span style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>{getPredictedFlux(selectedGuideData)}</span>
+                </div>
                 <div className={styles.intensityBar}>
-                  <div
+                  <motion.div
                     className={styles.intensityFill}
                     style={{ 
-                      width: isRepression 
-                        ? `${Math.max(2, 10 - selectedGuideData.atacScore * 20)}%`
-                        : `${Math.min(100, parseInt(selectedGuideData.predictedFlux) / 5 + 10)}%`,
+                      width: intensityWidth,
                       background: isRepression 
                         ? 'linear-gradient(90deg, #8b5cf6 0%, #6d28d9 100%)'
                         : 'linear-gradient(90deg, #22c55e 0%, #facc15 100%)'
                     }}
                   />
-                  <div className={styles.intensityValue}>{getPredictedFlux(selectedGuideData)}</div>
                 </div>
               </div>
             </div>
