@@ -28,10 +28,10 @@ function generateAtacPath(guides, regionStart, regionEnd, isPredicted = false, s
       let score = guide.atacScore;
       if (isPredicted && selectedGuide === guide.id) {
         if (isRepression) {
-          // KRAB repression - reduce accessibility dramatically
+          // Repression - reduce accessibility dramatically
           score = Math.max(0.02, guide.atacScore * 0.15);
         } else {
-          // VPR activation - increase accessibility
+          // Activation - increase accessibility
           score = guide.predictedAtac;
         }
       }
@@ -185,7 +185,7 @@ function DnaVisualization({ guides, selectedGuide, onSelectGuide, isRepression }
           style={{ opacity: selectedGuide ? 1 : 0 }}
         >
           <div className={styles.atacLabel} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
-            {isRepression ? '+KRAB' : '+VPR'}
+            {isRepression ? 'Repr' : 'Act'}
           </div>
           <div className={styles.atacSignal}>
             <svg viewBox="0 0 100 32" preserveAspectRatio="none" className={styles.atacSvg}>
@@ -210,7 +210,7 @@ function DnaVisualization({ guides, selectedGuide, onSelectGuide, isRepression }
         </div>
         <div className={styles.legendItem} style={{ visibility: selectedGuide ? 'visible' : 'hidden' }}>
           <span className={isRepression ? styles.legendAtacRepression : styles.legendAtacPredicted} />
-          <span>Predicted {isRepression ? '+KRAB' : '+VPR'}</span>
+          <span>Predicted</span>
         </div>
         <div className={styles.legendDelta} style={{ visibility: selectedGuideData ? 'visible' : 'hidden' }}>
           <span className={styles.legendDeltaLabel}>Δ Accessibility:</span>
@@ -242,7 +242,7 @@ export function GuideDesignPage() {
   
   const getPredictedFlux = (guide) => {
     if (isRepression) {
-      // KRAB reduces flux - stronger effect for higher ATAC scores
+      // Repression reduces flux - stronger effect for higher ATAC scores
       const reduction = Math.round(guide.atacScore * 100 * 0.85);
       return `-${reduction}%`;
     }
@@ -257,14 +257,15 @@ export function GuideDesignPage() {
         : 'linear-gradient(90deg, #166534 0%, #15803d 100%)' 
       }}>
         <span className={styles.modeTitle}>
-          {isRepression ? 'dCas9-KRAB Repression Mode (Active)' : 'dCas9-VPR Activation Mode (Active)'}
+          {isRepression ? 'Repression Mode' : 'Activation Mode'}
         </span>
         <div className={styles.modeActions}>
           <button 
             className={sharedStyles.buttonSecondary}
             onClick={() => setIsRepression(!isRepression)}
+            style={{ fontSize: 11, padding: '4px 10px' }}
           >
-            Switch to: {isRepression ? 'VPR Activation' : 'KRAB Repression'}
+            Switch to {isRepression ? 'Activation' : 'Repression'}
           </button>
         </div>
       </div>
@@ -362,7 +363,7 @@ export function GuideDesignPage() {
                 </span>
               </div>
               <div className={sharedStyles.dataRow} style={{ padding: '6px 0' }}>
-                <span className={sharedStyles.dataLabel}>{isRepression ? 'KRAB effect' : 'VPR effect'}</span>
+                <span className={sharedStyles.dataLabel}>{isRepression ? 'Repression' : 'Activation'}</span>
                 <span className={sharedStyles.dataValue} style={{ color: isRepression ? '#8b5cf6' : '#22c55e', fontSize: 11 }}>
                   → {Math.round(getPredictedAtac(selectedGuideData) * 100)}% ({isRepression ? '' : '+'}{Math.round((getPredictedAtac(selectedGuideData) - selectedGuideData.atacScore) * 100)}%)
                 </span>

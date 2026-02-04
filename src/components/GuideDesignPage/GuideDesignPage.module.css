@@ -12,14 +12,15 @@
 /* Mode header bar */
 .modeHeader {
   background: linear-gradient(90deg, #166534 0%, #15803d 100%);
-  padding: 12px 20px;
-  border-radius: 8px 8px 0 0;
+  padding: 6px 16px;
+  border-radius: 6px 6px 0 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modeTitle {
+  font-size: 12px;
   font-weight: 600;
 }
 
