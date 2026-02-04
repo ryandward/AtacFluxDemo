@@ -3,6 +3,7 @@ import styles from './App.module.css';
 import {
     BiochemistryPage,
     EpigenomePage,
+    FlavorSearchPage,
     FluxDynamicsPage,
     GuideDesignPage,
     Navigation,
@@ -11,6 +12,11 @@ import {
 import sharedStyles from './styles/shared.module.css';
 
 const pages = [
+  {
+    component: FlavorSearchPage,
+    title: 'Flavor Search',
+    subtitle: 'From banana beer to citrus IPA. Find the genes that make flavor compounds.',
+  },
   {
     component: BiochemistryPage,
     title: 'Biochemistry Layer',

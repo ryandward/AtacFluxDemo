@@ -8,7 +8,7 @@ import styles from './EpigenomePage.module.css';
 const aiTextChunks = [
   { text: 'Integrating 4 epigenomic layers...', isBullet: false },
   { text: 'Plenty of isoamyl alcohol precursor available', isBullet: true },
-  { text: 'ATF1 is epigenetically silenced (B compartment, H3K27me3+)', isBullet: true },
+  { text: 'ATF1 is epigenetically silenced (B compartment, high nucleosome occupancy)', isBullet: true },
   { text: 'Only 6% of cells can transcribe the esterification enzyme', isBullet: true },
   { text: 'Banana flavor pathway blocked at the final step', isBullet: true },
   { text: 'Opening ATF1 chromatin → ~4× more isoamyl acetate', isBullet: true },
@@ -71,21 +71,21 @@ const layerVisData = {
     implication: 'Nucleosome compaction at the ATF1 promoter prevents RNA polymerase binding.',
   },
   'ChIP-seq': {
-    metric: 'H3K27me3',
-    value: 4.7,
+    metric: 'Nucleosome density',
+    value: 3.2,
     unit: 'fold enrichment',
-    status: 'Polycomb Repression',
+    status: 'Chromatin Compaction',
     statusType: 'danger',
     color: '#06b6d4',
     description: 'Histone modification landscape at the ATF1 promoter',
     marks: [
-      { name: 'H3K27me3', value: 4.7, baseline: 1.0, type: 'repressive', color: '#ef4444' },
-      { name: 'H3K9me3', value: 2.1, baseline: 1.0, type: 'repressive', color: '#f59e0b' },
-      { name: 'H3K27ac', value: 0.4, baseline: 1.0, type: 'active', color: '#22c55e' },
+      { name: 'Nucleosome density', value: 3.2, baseline: 1.0, type: 'repressive', color: '#ef4444' },
       { name: 'H3K4me3', value: 0.6, baseline: 1.0, type: 'active', color: '#22c55e' },
+      { name: 'H3K9ac', value: 0.5, baseline: 1.0, type: 'active', color: '#22c55e' },
+      { name: 'H4K16ac', value: 0.4, baseline: 1.0, type: 'active', color: '#22c55e' },
     ],
-    finding: 'ATF1 shows strong H3K27me3 (4.7×) and depleted H3K27ac (0.4×) — a classic Polycomb-repressed signature.',
-    implication: 'The promoter is marked for silencing; dCas9-VPR could recruit activating acetyltransferases.',
+    finding: 'ATF1 shows high nucleosome density (3.2×) and depleted H3K4me3/acetylation — a tightly closed promoter.',
+    implication: 'The promoter is nucleosome-occluded; dCas9-VPR could recruit activating acetyltransferases to open chromatin.',
   },
 };
 

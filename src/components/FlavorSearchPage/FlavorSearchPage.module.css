@@ -1,0 +1,475 @@
+.container {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  gap: 16px;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Search Panel */
+.searchPanel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.searchContainer {
+  padding: 16px;
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 36px 12px 40px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.searchInput:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.searchInput::placeholder {
+  color: #64748b;
+}
+
+.clearButton {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.clearButton:hover {
+  color: white;
+}
+
+/* Suggestions */
+.suggestions {
+  margin-top: 16px;
+}
+
+.suggestionsLabel {
+  font-size: 11px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.suggestionTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestionTag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  color: #e2e8f0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.suggestionTag:hover {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #22c55e;
+}
+
+/* Descriptor List */
+.descriptorList {
+  padding: 8px;
+  overflow-y: auto;
+}
+
+.descriptorItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 12px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.descriptorItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.descriptorName {
+  color: #e2e8f0;
+}
+
+.descriptorCount {
+  color: #64748b;
+  font-size: 10px;
+}
+
+/* Results Panel */
+.resultsPanel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.resultsList {
+  padding: 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resultCard {
+  padding: 14px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 0.15s;
+}
+
+.resultCard:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.resultCardHighlight {
+  border-color: rgba(34, 197, 94, 0.3);
+  background: rgba(34, 197, 94, 0.05);
+}
+
+.resultCardHighlight:hover {
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.resultRank {
+  font-size: 10px;
+  color: #64748b;
+  min-width: 20px;
+}
+
+.geneInfo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex: 1;
+}
+
+.geneName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.geneId {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.keyGeneBadge {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: rgba(234, 179, 8, 0.2);
+  border: 1px solid rgba(234, 179, 8, 0.3);
+  border-radius: 4px;
+  color: #eab308;
+}
+
+.fullName {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  margin-left: 32px;
+}
+
+.compoundsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: 32px;
+}
+
+.compoundTag {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.compoundName {
+  color: #e2e8f0;
+}
+
+.compoundNote {
+  font-size: 9px;
+  color: #22c55e;
+  margin-top: 2px;
+}
+
+.moreCompounds {
+  padding: 6px 10px;
+  color: #64748b;
+  font-size: 11px;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 40px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  color: #e2e8f0;
+  margin-bottom: 8px;
+}
+
+.emptyText {
+  font-size: 13px;
+  color: #64748b;
+  max-width: 300px;
+}
+
+/* Details Panel */
+.detailsPanel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  transition: border-color 0.2s;
+}
+
+.detailsPanelActive {
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.detailsContent {
+  padding: 16px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.detailsHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.detailsGeneName {
+  font-size: 20px;
+  font-weight: 600;
+  color: #22c55e;
+}
+
+.detailsGeneId {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.detailsFullName {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.importanceBox {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 8px;
+  font-size: 12px;
+  color: #86efac;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.importanceIcon {
+  font-size: 14px;
+}
+
+.detailsSection {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.compoundsDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.compoundDetail {
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.compoundDetailName {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  margin-bottom: 4px;
+}
+
+.compoundDetailNote {
+  font-size: 10px;
+  color: #22c55e;
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.descriptorRow {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.descriptorLabel {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.descriptorValues {
+  color: #94a3b8;
+}
+
+.descriptorValue {
+  transition: color 0.15s;
+}
+
+.descriptorMatch {
+  color: #fbbf24;
+  font-weight: 500;
+}
+
+.descriptorMore {
+  color: #64748b;
+  margin-left: 4px;
+}
+
+/* All Descriptors */
+.allDescriptors {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.descriptorCategory {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.categoryLabel {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.categoryTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.categoryTag {
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.categoryTagMatch {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+}
+
+.categoryMore {
+  padding: 3px 8px;
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* Action Section */
+.actionSection {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Empty details */
+.detailsEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #64748b;
+  font-size: 13px;
+  padding: 20px;
+  text-align: center;
+}
