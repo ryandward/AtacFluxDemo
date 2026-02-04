@@ -179,19 +179,20 @@ function DnaVisualization({ guides, selectedGuide, onSelectGuide, isRepression }
           </div>
         </div>
         
-        {/* Predicted ATAC track - shows when guide is selected */}
-        {selectedGuide && (
-          <div className={`${styles.atacTrack} ${styles.atacTrackPredicted}`}>
-            <div className={styles.atacLabel} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
-              {isRepression ? '+KRAB' : '+VPR'}
-            </div>
-            <div className={styles.atacSignal}>
-              <svg viewBox="0 0 100 32" preserveAspectRatio="none" className={styles.atacSvg}>
-                <path d={predictedAtacPath} fill={isRepression ? 'url(#atacRepressionGradient)' : 'url(#atacPredictedGradient)'} />
-              </svg>
-            </div>
+        {/* Predicted ATAC track - always rendered for layout stability */}
+        <div 
+          className={`${styles.atacTrack} ${styles.atacTrackPredicted}`}
+          style={{ opacity: selectedGuide ? 1 : 0 }}
+        >
+          <div className={styles.atacLabel} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
+            {isRepression ? '+KRAB' : '+VPR'}
           </div>
-        )}
+          <div className={styles.atacSignal}>
+            <svg viewBox="0 0 100 32" preserveAspectRatio="none" className={styles.atacSvg}>
+              <path d={predictedAtacPath || currentAtacPath} fill={isRepression ? 'url(#atacRepressionGradient)' : 'url(#atacPredictedGradient)'} />
+            </svg>
+          </div>
+        </div>
       </div>
       
       <div className={styles.dnaLegend}>
@@ -207,20 +208,19 @@ function DnaVisualization({ guides, selectedGuide, onSelectGuide, isRepression }
           <span className={styles.legendAtac} />
           <span>Current ATAC</span>
         </div>
-        {selectedGuide && (
-          <div className={styles.legendItem}>
-            <span className={isRepression ? styles.legendAtacRepression : styles.legendAtacPredicted} />
-            <span>Predicted {isRepression ? '+KRAB' : '+VPR'}</span>
-          </div>
-        )}
-        {selectedGuideData && (
-          <div className={styles.legendDelta}>
-            <span className={styles.legendDeltaLabel}>Δ Accessibility:</span>
-            <span className={styles.legendDeltaValue} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
-              {Math.round(selectedGuideData.atacScore * 100)}% → {Math.round(getPredictedAtac(selectedGuideData) * 100)}%
-            </span>
-          </div>
-        )}
+        <div className={styles.legendItem} style={{ visibility: selectedGuide ? 'visible' : 'hidden' }}>
+          <span className={isRepression ? styles.legendAtacRepression : styles.legendAtacPredicted} />
+          <span>Predicted {isRepression ? '+KRAB' : '+VPR'}</span>
+        </div>
+        <div className={styles.legendDelta} style={{ visibility: selectedGuideData ? 'visible' : 'hidden' }}>
+          <span className={styles.legendDeltaLabel}>Δ Accessibility:</span>
+          <span className={styles.legendDeltaValue} style={{ color: isRepression ? '#8b5cf6' : '#22c55e' }}>
+            {selectedGuideData 
+              ? `${Math.round(selectedGuideData.atacScore * 100)}% → ${Math.round(getPredictedAtac(selectedGuideData) * 100)}%`
+              : '—% → —%'
+            }
+          </span>
+        </div>
       </div>
     </div>
   );
