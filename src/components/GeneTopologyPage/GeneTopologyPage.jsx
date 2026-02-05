@@ -211,12 +211,14 @@ export function GeneTopologyPage() {
             📍 Glucose-limited anaerobic (mid-brew)
           </div>
 
-          {/* Load All button */}
-          {anyLayerIdle && (
-            <button className={styles.loadAllBtn} onClick={handleLoadAll}>
-              Load All Layers
-            </button>
-          )}
+          {/* Load All button - disabled when all layers loaded */}
+          <button 
+            className={styles.loadAllBtn} 
+            onClick={handleLoadAll}
+            disabled={!anyLayerIdle}
+          >
+            Load All Layers
+          </button>
 
           {/* Layer Stack */}
           <div className={styles.layerList}>
