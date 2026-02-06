@@ -4,7 +4,7 @@ import { cn } from '../../lib/utils';
 export function DataRow({ label, value, className, mono = false, valueColor }) {
   return (
     <div className={cn('flex justify-between py-1.5 text-[11px]', className)}>
-      <span className="text-slate-500">{label}</span>
+      <span className="text-slate-400">{label}</span>
       <span
         className={cn('font-medium', mono && 'font-mono', valueColor || 'text-slate-200')}
       >

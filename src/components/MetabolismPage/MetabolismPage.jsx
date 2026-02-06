@@ -31,10 +31,12 @@ export function MetabolismPage() {
   };
 
   const getDGColor = (dG) => {
-    if (dG === 0) return 'text-slate-500';
-    if (dG < -30) return 'text-blue-400';
-    if (dG > 30) return 'text-amber-400';
-    return 'text-green-400';
+    if (dG === 0) return 'text-slate-400';
+    if (dG < -20) return 'text-cyan-400';     // Very favorable
+    if (dG < -5) return 'text-green-400';     // Favorable
+    if (dG < 5) return 'text-blue-400';       // Near equilibrium
+    if (dG < 20) return 'text-amber-400';     // Unfavorable
+    return 'text-orange-500';                 // Very unfavorable
   };
 
   return (
@@ -144,7 +146,7 @@ export function MetabolismPage() {
                 style={waveDelay ? { transitionDelay: `${waveDelay}ms` } : undefined}
               >
                 <div className="mono" style={{
-                  color: flux === 0 ? '#ef4444' : isIncreased ? '#22c55e' : (isReduced || isLimited) ? '#fb923c' : '#4ade80',
+                  color: flux === 0 ? '#ef4444' : flux >= 5.0 ? '#22c55e' : flux >= 1.0 ? '#4ade80' : flux >= 0.1 ? '#fbbf24' : '#fb923c',
                   transition: 'color 0.4s',
                   transitionDelay: waveDelay ? `${waveDelay}ms` : undefined
                 }}>

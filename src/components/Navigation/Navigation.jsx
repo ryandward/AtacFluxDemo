@@ -21,7 +21,7 @@ export function Navigation({ activePage, setActivePage }) {
   return (
     <header className="flex items-center justify-between px-10 py-5 border-b border-white/[0.06]">
       <div className="flex items-center gap-4">
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm">
+        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white font-bold text-sm">
           E2P
         </div>
         <div>
@@ -44,7 +44,7 @@ export function Navigation({ activePage, setActivePage }) {
           </button>
         ))}
         <div
-          className="absolute bottom-0 h-0.5 bg-gradient-to-r from-blue-500 to-violet-500 rounded-sm transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none"
+          className="absolute bottom-0 h-0.5 bg-gradient-to-r from-blue-500 to-violet-600 rounded-sm transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] pointer-events-none"
           style={{ left: indicator.left, width: indicator.width }}
         />
       </nav>

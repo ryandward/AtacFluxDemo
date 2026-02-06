@@ -172,7 +172,7 @@ export function BiochemistryPage() {
               >
                 <div className={cn(
                   'font-mono transition-colors',
-                  flux === 0 ? 'text-red-500' : isIncreased ? 'text-green-500' : (isReduced || isLimited) ? 'text-orange-400' : 'text-green-400'
+                  flux === 0 ? 'text-red-500' : flux >= 5.0 ? 'text-green-500' : flux >= 1.0 ? 'text-green-400' : flux >= 0.1 ? 'text-amber-400' : 'text-orange-400'
                 )}>
                   {flux.toFixed(2)}
                 </div>

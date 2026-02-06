@@ -41,9 +41,18 @@ export function ThermoBadge({ dG, className }) {
   let variant = 'info';
   if (dG < -10) variant = 'success';
   else if (dG > 10) variant = 'warning';
+  
+  // Color by temperature scale
+  let textColor = 'text-blue-400';
+  if (dG < -20) textColor = 'text-cyan-400';
+  else if (dG < -5) textColor = 'text-green-400';
+  else if (dG < 5) textColor = 'text-blue-400';
+  else if (dG < 20) textColor = 'text-amber-400';
+  else if (dG > 0) textColor = 'text-orange-500';
+  
   return (
-    <Badge variant={variant} className={cn('font-mono', className)}>
+    <span className={cn('font-mono text-[10px]', textColor, className)}>
       {dG === 0 ? '—' : dG}
-    </Badge>
+    </span>
   );
 }
