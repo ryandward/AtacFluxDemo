@@ -259,7 +259,8 @@ export function SimulationPage() {
                   <div key={gene}
                     className={cn(
                       'flex items-center justify-between py-3 px-3.5 -mx-1 rounded-lg cursor-pointer relative z-[1] transition-all duration-150',
-                      state !== 'normal' && 'bg-green-500/[0.08]',
+                      state === 'activate' && 'bg-green-500/[0.08]',
+                      state === 'repress' && 'bg-red-500/[0.08]',
                       state === 'normal' && 'hover:shadow-[inset_0_0_0_100px_rgba(255,255,255,0.04)]',
                     )}
                   >

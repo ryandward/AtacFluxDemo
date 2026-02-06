@@ -1,11 +1,13 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { geneFlavorMap, getDescriptorStats, searchByDescriptor, suggestedSearches } from '../../data/geneFlavorMap';
 import { cn } from '../../lib/utils';
 import { Card, CardHeader, DataRow, EmptyState } from '../ui';
+import { useSelectionStore } from '../../stores';
 
 export function FlavorSearchPage() {
-  const [query, setQuery] = useState('');
-  const [selectedGene, setSelectedGene] = useState(null);
+  const { searchedPhenotype, phenotypeSearchGene, setSearchedPhenotype, setPhenotypeSearchGene } = useSelectionStore();
+  const query = searchedPhenotype;
+  const selectedGene = phenotypeSearchGene;
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
@@ -15,8 +17,8 @@ export function FlavorSearchPage() {
   const stats = useMemo(() => getDescriptorStats(), []);
 
   const handleSuggestionClick = (term) => {
-    setQuery(term);
-    setSelectedGene(null);
+    setSearchedPhenotype(term);
+    setPhenotypeSearchGene(null);
   };
 
   const selectedGeneData = selectedGene
@@ -36,14 +38,14 @@ export function FlavorSearchPage() {
               <input
                 type="text"
                 value={query}
-                onChange={(e) => { setQuery(e.target.value); setSelectedGene(null); }}
+                onChange={(e) => { setSearchedPhenotype(e.target.value); setPhenotypeSearchGene(null); }}
                 placeholder="Phenotype search..."
                 autoFocus
                 className="w-full py-3 pl-10 pr-9 bg-black/30 border border-white/15 rounded-lg text-white text-sm outline-none transition-all focus:border-green-500 focus:shadow-[0_0_0_2px_rgba(34,197,94,0.2)] placeholder:text-slate-500"
               />
               {query && (
                 <button
-                  onClick={() => { setQuery(''); setSelectedGene(null); }}
+                  onClick={() => { setSearchedPhenotype(''); setPhenotypeSearchGene(null); }}
                   className="absolute right-2.5 bg-transparent border-none text-slate-500 text-lg cursor-pointer px-2 py-1 hover:text-white"
                 >
                   ×
@@ -121,7 +123,7 @@ export function FlavorSearchPage() {
             {results.map((gene, idx) => (
               <div
                 key={gene.gene_id}
-                onClick={() => setSelectedGene(gene.gene_id)}
+                onClick={() => setPhenotypeSearchGene(gene.gene_id)}
                 className={cn(
                   'p-3.5 px-4 bg-black/20 border rounded-lg cursor-pointer relative z-[1] transition-all duration-150',
                   selectedGene === gene.gene_id

@@ -8,7 +8,11 @@ export const useSelectionStore = create((set, get) => ({
   // Selection state
   selectedLayer: null,       // e.g., 'ATAC-seq', 'Hi-C', 'ChIP-seq', 'RNA-seq'
   selectedGene: null,        // e.g., 'ATF1', 'BAT2'
-  selectedReaction: 'r_0160', // Default to first reaction
+  selectedReaction: null,    // Default to first reaction
+  
+  // Phenotype search state
+  searchedPhenotype: '',     // Search query for phenotype/flavor
+  phenotypeSearchGene: null, // Selected gene from phenotype search results
 
   // Layer loading states: 'idle' | 'loading' | 'loaded'
   layerLoadStates: {
@@ -42,6 +46,11 @@ export const useSelectionStore = create((set, get) => ({
   selectReaction: (reaction) => set((state) => ({
     selectedReaction: state.selectedReaction === reaction ? null : reaction,
   })),
+
+  // Phenotype search actions
+  setSearchedPhenotype: (query) => set({ searchedPhenotype: query }),
+  
+  setPhenotypeSearchGene: (geneId) => set({ phenotypeSearchGene: geneId }),
 
   // Layer loading actions
   setLayerLoading: (source) => set((state) => ({
@@ -78,5 +87,7 @@ export const useSelectionStore = create((set, get) => ({
     selectedLayer: null,
     selectedGene: null,
     selectedReaction: null,
+    searchedPhenotype: '',
+    phenotypeSearchGene: null,
   }),
 }));
