@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 
-const pages = ['Flavor Search', 'Metabolism', 'Gene Topology', 'Simulation', 'Guide Design'];
+const pages = ['Phenotype Search', 'Metabolism', 'Gene Topology', 'Simulation', 'Guide Design'];
 
 export function Navigation({ activePage, setActivePage }) {
   const navRef = useRef(null);
@@ -22,11 +22,11 @@ export function Navigation({ activePage, setActivePage }) {
     <header className="flex items-center justify-between px-10 py-5 border-b border-white/[0.06]">
       <div className="flex items-center gap-4">
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white font-bold text-sm">
-          AF
+          E2P
         </div>
         <div>
-          <div className="type-title text-base tracking-tight">atacflux</div>
-          <div className="type-sm text-slate-500">Metabolic Engineering Platform</div>
+          <div className="type-title text-base tracking-tight">E2P</div>
+          <div className="type-sm text-slate-500">Epigenome2Phenome</div>
         </div>
       </div>
 

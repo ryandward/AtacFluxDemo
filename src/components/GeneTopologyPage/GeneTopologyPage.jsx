@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { epigenomeLayers } from '../../data';
-import { useSelectionStore } from '../../stores';
 import { cn } from '../../lib/utils';
-import { Card, CardHeader, CardContent, DataRow, EmptyState } from '../ui';
+import { useSelectionStore } from '../../stores';
+import { Card, CardHeader, DataRow, EmptyState } from '../ui';
 
 const aiTextChunks = [
   { text: 'ATF1 bottleneck is epigenetic silencing: closed chromatin, high nucleosomes, depleted active marks, compartment B localization', isBullet: false },

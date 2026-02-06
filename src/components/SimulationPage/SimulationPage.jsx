@@ -2,8 +2,8 @@ import { motion, useSpring, useTransform } from 'framer-motion';
 import { useEffect } from 'react';
 import { baselineChromatin, metabolites, pathwayEdges } from '../../data';
 import { getChromatinColor, useFluxSolver, usePathwayLayout } from '../../hooks';
-import { useSelectionStore } from '../../stores';
 import { cn } from '../../lib/utils';
+import { useSelectionStore } from '../../stores';
 import { Card, CardHeader, PlotSurface } from '../ui';
 import './SimulationPage.css';
 
@@ -237,7 +237,7 @@ export function SimulationPage() {
         {/* Interventions */}
         <Card className="flex-1">
           <CardHeader>
-            <span>CRISPR Interventions</span>
+            <span>Interventions</span>
             <button
               onClick={resetInterventions}
               className="type-caption font-semibold text-slate-400 bg-white/[0.06] border border-white/10 rounded px-2.5 py-1 cursor-pointer transition-all hover:bg-white/10 hover:text-slate-200 hover:border-white/20"

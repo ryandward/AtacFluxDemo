@@ -28,7 +28,7 @@ export function FlavorSearchPage() {
       {/* Left: Search Panel */}
       <div className="flex flex-col min-h-0">
         <Card>
-          <CardHeader>Flavor Search</CardHeader>
+          <CardHeader>Desired Phenotype</CardHeader>
           <div className="p-4">
             {/* Search Input */}
             <div className="relative flex items-center">
@@ -37,7 +37,7 @@ export function FlavorSearchPage() {
                 type="text"
                 value={query}
                 onChange={(e) => { setQuery(e.target.value); setSelectedGene(null); }}
-                placeholder="Search for a flavor (e.g., banana, peach, rancid)..."
+                placeholder="Phenotype search..."
                 autoFocus
                 className="w-full py-3 pl-10 pr-9 bg-black/30 border border-white/15 rounded-lg text-white text-sm outline-none transition-all focus:border-green-500 focus:shadow-[0_0_0_2px_rgba(34,197,94,0.2)] placeholder:text-slate-500"
               />
@@ -76,7 +76,6 @@ export function FlavorSearchPage() {
         <Card className="mt-4">
           <CardHeader>Database</CardHeader>
           <div className="p-4">
-            <DataRow label="Total genes" value={<span className="mono">{stats.totalGenes}</span>} style={{ padding: '6px 0' }} />
             <DataRow label="Source model" value="Yeast-GEM 8.6" style={{ padding: '6px 0' }} />
             <DataRow label="Flavor data" value="GoodScents" style={{ padding: '6px 0' }} />
           </div>

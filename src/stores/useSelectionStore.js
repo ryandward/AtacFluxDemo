@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 /**
  * Global selection state for cross-component coordination.
- * Tracks selected epigenome layer, gene, reaction, and CRISPR interventions.
+ * Tracks selected epigenome layer, gene, reaction, and guide interventions.
  */
 export const useSelectionStore = create((set, get) => ({
   // Selection state
@@ -22,7 +22,7 @@ export const useSelectionStore = create((set, get) => ({
   convergenceState: 'idle',
   convergenceTypingComplete: false,
 
-  // CRISPR intervention state: 'repress' | 'normal' | 'activate'
+  // Intervention state: 'repress' | 'normal' | 'activate'
   interventions: {
     BAT2: 'normal',
     ARO10: 'normal',

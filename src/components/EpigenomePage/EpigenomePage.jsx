@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { epigenomeLayers } from '../../data';
-import { useSelectionStore } from '../../stores';
 import { cn } from '../../lib/utils';
-import { Card, CardHeader, CardTitle, CardContent, DataRow, InfoBox, Button, Select, ComparisonBar } from '../ui';
+import { useSelectionStore } from '../../stores';
+import { Button, Card, CardContent, CardHeader, CardTitle, ComparisonBar, DataRow, InfoBox, Select } from '../ui';
 
 // AI convergence data
 const aiTextChunks = [
@@ -69,7 +69,7 @@ const layerVisData = {
       { name: 'H3K4me3', value: 0.6, type: 'active', color: '#22c55e' },
     ],
     finding: 'ATF1 shows strong H3K27me3 (4.7×) and depleted H3K27ac (0.4×) — a classic Polycomb-repressed signature.',
-    implication: 'The promoter is marked for silencing; dCas9-VPR could recruit activating acetyltransferases.',
+    implication: 'The promoter is marked for silencing; targeted activation could recruit activating acetyltransferases.',
   },
 };
 

@@ -1,5 +1,5 @@
 /**
- * Mock thermodynamic data structure based on ATACFlux cache
+ * Mock thermodynamic data structure based on E2P cache
  * Real data from yeast-GEM integrated with eQuilibrator
  */
 

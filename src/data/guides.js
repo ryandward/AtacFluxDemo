@@ -1,7 +1,7 @@
 /**
- * sgRNA guide data for ATF1 promoter targeting (CRISPRa)
+ * Guide data for ATF1 promoter targeting
  * Spacers extracted from S. cerevisiae S288C chrXV:1045726-1046226 (NC_001147.6)
- * SpCas9 NGG PAM sites, filtered for poly-T/A runs and GC content
+ * NGG PAM sites, filtered for poly-T/A runs and GC content
  * Ranked by proximity to TSS and predicted flux impact
  * 
  * ATAC scores and predicted flux values are modeled, not experimentally validated
@@ -106,6 +106,5 @@ export const targetGene = {
   description: 'Catalyzes the esterification of isoamyl alcohol with acetyl-CoA to produce isoamyl acetate (banana flavor)',
   region: 'Promoter (-500 to TSS)',
   source: 'NC_001147.6:1045726-1046226',
-  pam: 'NGG',
-  cas: 'SpCas9'
+  pam: 'NGG'
 };

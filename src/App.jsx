@@ -12,7 +12,7 @@ import {
 const pages = [
   {
     component: FlavorSearchPage,
-    title: 'Flavor Search',
+    title: 'Phenotype Search',
     subtitle: 'From banana beer to citrus IPA. Find the genes that make flavor compounds.',
   },
   {
@@ -33,7 +33,7 @@ const pages = [
   {
     component: GuideDesignPage,
     title: 'Guide Design',
-    subtitle: 'CRISPR guides ranked by predicted flux impact. Target accessible chromatin for maximum effect.',
+    subtitle: 'Guides ranked by predicted flux impact. Target accessible chromatin for maximum effect.',
   },
 ];
 
